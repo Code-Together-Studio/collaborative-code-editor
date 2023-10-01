@@ -28,4 +28,15 @@ public class Folder {
 
     @Column(name = "created_at")
     private Date createdAt;
+
+    @Override
+    public String toString() {
+        return "Folder{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", childrenFolders=" + childrenFolders.stream().map(Folder::getName).toList() +
+                ", parentFolder=" + ((parentFolder == null) ? "it's highest folder" : parentFolder.getName()) +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }

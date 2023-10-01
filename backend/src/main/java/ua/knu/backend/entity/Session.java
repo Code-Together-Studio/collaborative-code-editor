@@ -29,5 +29,19 @@ public class Session {
 
     @Column(name = "is_public")
     private boolean isPublic;
-    private Folder folder;
+
+    @ManyToMany(mappedBy = "sessions")
+    private List<User> users;
+
+    @Override
+    public String toString() {
+        return "Session{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", codeSnippet='" + codeSnippet + '\'' +
+                ", createdAt=" + createdAt +
+                ", isPublic=" + isPublic +
+                ", users=" + users.stream().map(User::getUsername).collect(Collectors.toList()) +
+                '}';
+    }
 }
