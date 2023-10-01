@@ -3,14 +3,29 @@ package ua.knu.backend.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
+@Entity(name = "Folders")
 public class Folder {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
+
+    @Column(name = "name")
     private String name;
-    private Folder parent;
+
+    @OneToMany(mappedBy = "parentFolder", fetch = FetchType.EAGER) //TODO change to Lazy
+    private List<Folder> childrenFolders;
+
+    @ManyToOne
+    @JoinColumn(name = "parent", referencedColumnName = "id")
+    private Folder parentFolder;
+
+    @Column(name = "created_at")
     private Date createdAt;
 }
