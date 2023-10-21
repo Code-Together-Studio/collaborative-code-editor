@@ -29,4 +29,9 @@ public class CodeSnippet {
 
     @Column(name = "folder_id")
     private Integer folderId;
+
+    public CodeSnippet(String name, Integer folderId) {
+        this.name = name;
+        this.folderId = folderId;
+    }
 }

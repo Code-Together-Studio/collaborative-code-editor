@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -26,6 +24,16 @@ public class Project {
 
     @Column(name = "authenticated_only")
     private boolean authenticatedOnly;
+
+    public Project(String title) {
+        this(title, false);
+    }
+
+    public Project(String title, boolean authenticatedOnly) {
+        this.title = title;
+        this.authenticatedOnly = authenticatedOnly;
+        this.createdAt = new Date();
+    }
 
     @Override
     public String toString() {

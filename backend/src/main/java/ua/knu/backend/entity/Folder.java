@@ -3,6 +3,8 @@ package ua.knu.backend.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +30,13 @@ public class Folder {
 
     @Column(name = "created_at")
     private Date createdAt;
+
+    public Folder(String name, Folder parentFolder) {
+        this.name = name;
+        this.parentFolder = parentFolder;
+        this.childrenFolders = new ArrayList<>();
+        this.createdAt = new Date();
+    }
 
     @Override
     public String toString() {
