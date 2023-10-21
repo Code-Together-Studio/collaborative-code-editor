@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.entity.Folder;
-import ua.knu.backend.entity.Session;
+import ua.knu.backend.entity.Project;
 import ua.knu.backend.entity.User;
 import ua.knu.backend.repository.CodeSnippetRepository;
 import ua.knu.backend.repository.FolderRepository;
-import ua.knu.backend.repository.SessionRepository;
+import ua.knu.backend.repository.ProjectRepository;
 import ua.knu.backend.repository.UserRepository;
 
 import java.util.stream.Collectors;
@@ -22,14 +22,14 @@ public class TestController {
 
     private final UserRepository userRepository;
 
-    private final SessionRepository sessionRepository;
+    private final ProjectRepository projectRepository;
 
     private final CodeSnippetRepository codeSnippetRepository;
 
-    public TestController(FolderRepository folderRepository, UserRepository userRepository, SessionRepository sessionRepository, CodeSnippetRepository codeSnippetRepository) {
+    public TestController(FolderRepository folderRepository, UserRepository userRepository, ProjectRepository projectRepository, CodeSnippetRepository codeSnippetRepository) {
         this.folderRepository = folderRepository;
         this.userRepository = userRepository;
-        this.sessionRepository = sessionRepository;
+        this.projectRepository = projectRepository;
         this.codeSnippetRepository = codeSnippetRepository;
     }
 
@@ -43,9 +43,9 @@ public class TestController {
         return folderRepository.findAll().stream().map(Folder::toString).collect(Collectors.joining("\n"));
     }
 
-    @GetMapping("/sessions")
-    public String getAllSessions(){
-        return sessionRepository.findAll().stream().map(Session::toString).collect(Collectors.joining("\n"));
+    @GetMapping("/projects")
+    public String getAllProjects(){
+        return projectRepository.findAll().stream().map(Project::toString).collect(Collectors.joining("\n"));
     }
 
     @GetMapping("/codeSnippets")

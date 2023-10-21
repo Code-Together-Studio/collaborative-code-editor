@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
-@Entity(name = "Sessions")
-public class Session {
+@Entity(name = "projects")
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,27 +21,19 @@ public class Session {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "code_snippet")
-    private String codeSnippet;
-
     @Column(name = "created_at")
     private Date createdAt;
 
-    @Column(name = "is_public")
-    private boolean isPublic;
-
-    @ManyToMany(mappedBy = "sessions")
-    private List<User> users;
+    @Column(name = "authenticated_only")
+    private boolean authenticatedOnly;
 
     @Override
     public String toString() {
         return "Session{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", codeSnippet='" + codeSnippet + '\'' +
                 ", createdAt=" + createdAt +
-                ", isPublic=" + isPublic +
-                ", users=" + users.stream().map(User::getUsername).collect(Collectors.toList()) +
+                ", authenticatedOnly=" + authenticatedOnly +
                 '}';
     }
 }
