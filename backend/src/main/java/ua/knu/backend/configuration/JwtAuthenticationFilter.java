@@ -17,6 +17,8 @@ import ua.knu.backend.service.JWTService;
 import ua.knu.backend.service.UserService;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userName;
 
-        if(StringUtils.isEmpty(authHeader) || org.apache.commons.lang3.StringUtils.startsWith(authHeader, "Bearer ")){
+        if(StringUtils.isEmpty(authHeader) || !org.apache.commons.lang3.StringUtils.startsWith(authHeader, "Bearer ") || !authHeader.startsWith("Bearer")){
             filterChain.doFilter(request, response);
             return;
         }
@@ -44,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(jwtService.isTokenValid(jwt, userDetails)){
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
 
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, Collections.emptyList(), userDetails.getAuthorities());
 
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
