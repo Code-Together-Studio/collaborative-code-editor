@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.entity.Folder;
-import ua.knu.backend.entity.Project;
 import ua.knu.backend.entity.User;
 import ua.knu.backend.repository.CodeSnippetRepository;
 import ua.knu.backend.repository.FolderRepository;
@@ -45,7 +44,8 @@ public class TestController {
 
     @GetMapping("/projects")
     public String getAllProjects(){
-        return projectRepository.findAll().stream().map(Project::toString).collect(Collectors.joining("\n"));
+        return "OK 200";
+        //return projectRepository.findAll().stream().map(Project::toString).collect(Collectors.joining("\n"));
     }
 
     @GetMapping("/codeSnippets")
