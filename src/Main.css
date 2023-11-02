@@ -8,7 +8,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
   background-color: #081B33; /* Set your background color */
   color: white; /* Set your text color */
 }
@@ -20,8 +19,8 @@
 }
 
 .icon {
-  width: 30px; /* Adjust icon size */
-  height: 30px;
+  width: 50px; /* Adjust icon size */
+  height: 50px;
 }
 
 .button-container {
@@ -32,7 +31,7 @@
   margin-left: 10px; /* Adjust spacing between buttons */
   padding: 8px 16px; /* Adjust padding as needed */
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
   color: #081B33; /* Set text color for normal state */
   background-color: #B2DAFE;

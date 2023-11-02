@@ -56,7 +56,7 @@ const Main = () => {
         <div className="app">
             <div className="header">
                 <div className="icon-container">
-                    <img style={{width: '50px', height: '50px'}} src="logo.png" alt="icon" className="icon"/>
+                    <img className="icon" src="logo.png" alt="icon" className="icon"/>
                 </div>
                 <div className="button-container">
                     <button className="button" disabled>

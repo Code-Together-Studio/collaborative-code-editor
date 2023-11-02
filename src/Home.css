@@ -1,0 +1,65 @@
+.home {
+    height: 100vh; /* Set the app height to 100% of the viewport height */
+    display: flex;
+    flex-direction: column;
+    /*background-image: url("../public/background.jpg");*/
+    background: linear-gradient(rgba(0, 0, 20, 0.8), rgba(0, 0, 20, 0.8)), url("../public/background.jpg");
+    background-size: cover;
+    /*opacity: 0.5;
+    filter: brightness(0.5);*/
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: transparent; /* Set your background color */
+    color: white; /* Set your text color */
+}
+
+.icon-container {
+    margin: 0 10px; /* Adjust as needed */
+    display: flex;
+    alignItems: center;
+}
+
+.icon {
+    width: 50px; /* Adjust icon size */
+    height: 50px;
+}
+
+.siteName {
+    font: 1.2rem "JetBrains Mono";
+    color:  #B2DAFE;
+}
+
+.button-container {
+    display: flex;
+}
+
+.button {
+    margin: 0 10px; /* Adjust spacing between buttons */
+    padding: 8px 16px; /* Adjust padding as needed */
+    border: 1px solid #B2DAFE;
+    cursor: pointer;
+    color: #B2DAFE; /* Set text color for normal state */
+    background-color: transparent;
+    borderRadius: 10px;
+    fontFamily: 'JetBrains Mono'
+}
+
+.content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.text {
+    width: 1065px;
+    height: 75px;
+    font: 4rem "JetBrains Mono";
+    color: #B2DAFE;
+    text-align: center;
+}
