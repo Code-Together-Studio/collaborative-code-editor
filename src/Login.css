@@ -1,0 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
+a {
+    text-decoration: none;
+    color: #1290FF;
+}
+
+.login-body {
+    height: 100vh; /* Set the app height to 100% of the viewport height */
+    display: flex;
+    flex-direction: column;
+    background-color: #252E39;
+}
+
+.login-input {
+    width: 500px;
+    height: 70px;
+    border-radius: 10px;
+    margin: 15px;
+    border: 1px solid #B2DAFE;
+    color: #B2DAFE;
+    background-color: transparent;
+    text-align: center;
+    font: 1.5rem 'Fira Code';
+}
+
+.login-input::placeholder {
+    color: #4F6170;
+}
+
+.login-button {
+    width: 500px;
+    height: 70px;
+    border-radius: 10px;
+    margin: 15px;
+    border: 1px solid #B2DAFE;
+    cursor: pointer;
+    color: #1C3F69;
+    background-color: #B2DAFE;
+    font: 1.5rem 'Fira Code';
+}
+
+.login-button:hover {
+    background-color: #82C4FF;
+}
+
+.login-button:active {
+    background-color: #6AB9FF;
+}
+
+.login-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-text {
+    width: 829px;
+    height: 63px;
+    font: 3rem "Fira Code";
+    color: #B2DAFE;
+    text-align: center;
+    margin: 31px 0;
+}
+
+.login-text-small {
+    margin: 20px;
+    width: 403px;
+    height: 26px;
+    font: 1.2rem "Fira Code";
+    color: #B2DAFE;
+    text-align: center;
+}
