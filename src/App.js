@@ -3,6 +3,7 @@ import Main from './Main';
 import Home from './Home';
 import Test from './Test';
 import Login from './Login';
+import Signup from "./Signup";
 
 function App() {
     return (
@@ -12,6 +13,7 @@ function App() {
                 <Route exact path="/home" element={<Home/>}/>
                 <Route exact path="/test" element={<Test/>}/>
                 <Route exact path="/login" element={<Login/>}/>
+                <Route exact path="/signup" element={<Signup/>}/>
             </Routes>
         </Router>
     )
