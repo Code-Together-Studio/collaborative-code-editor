@@ -12,7 +12,7 @@ const Login = () => {
                     <h3 className="siteName">CodeTogether</h3>
                 </div>
             </div>
-            <div className="content">
+            <div className="login-content">
                 <div className="login-text"> Log in to return to work</div>
                 <div className="login-button-container">
                     <input

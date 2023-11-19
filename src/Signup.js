@@ -12,7 +12,7 @@ const Signup = () => {
                     <h3 className="siteName">CodeTogether</h3>
                 </div>
             </div>
-            <div className="content">
+            <div className="login-content">
                 <div className="login-text">Sign up to create projects</div>
                 <div className="login-button-container">
                     <input

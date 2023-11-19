@@ -55,20 +55,19 @@ const Main = () => {
     return (
         <div className="app">
             <div className="header">
-                <div className="icon-container">
-                    <img className="icon" src="logo.png" alt="icon" className="icon"/>
+                <div style={{display: "flex", alignItems: "center"}}>
+                    <div className="icon-container">
+                        <img className="icon" src="logo.png" alt="icon"/>
+                    </div>
+                    <h3 className="siteName">CodeTogether</h3>
                 </div>
                 <div className="button-container">
-                    <button className="button" disabled>
-                        Disabled
-                    </button>
-                    <button className="button">Normal</button>
-                    <button className="button focused">Focused</button>
-                    <button className="button pressed">Pressed</button>
+                    <a href="signup"><button className="button" style={{borderRadius: "10px"}} >Sign up</button></a>
+                    <a href="login"><button className="button" style={{borderRadius: "10px"}} >Log in</button></a>
                 </div>
             </div>
             <div className="main-content">
-                <div className="left-block">
+                <div className="main-left-block">
                     <div>
                         {/*<button onClick={toggleList}>Toggle List</button>
                         {isOpen && (
@@ -81,7 +80,7 @@ const Main = () => {
                         <ul style={{listStyle: 'none', padding: 0}}>
                             {items.map((item, index) => (
                                 <li key={index} style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
-                                    <button className="buttonStyle" onClick={toggleList}> ></button>
+                                    <button className="main-button-style" onClick={toggleList}> ></button>
                                     <img
                                         src={item.imageSrc}
                                         style={{width: '30px', height: '30px', marginRight: '10px'}}
@@ -99,8 +98,8 @@ const Main = () => {
                         </ul>
                     </div>
                 </div>
-                <div className="right-block">
-                    <textarea className="textarea"></textarea>
+                <div className="main-right-block">
+                    <textarea className="main-textarea"></textarea>
                 </div>
             </div>
         </div>

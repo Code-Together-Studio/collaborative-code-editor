@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
 .home {
     height: 100vh; /* Set the app height to 100% of the viewport height */
     display: flex;
@@ -9,7 +11,7 @@
     filter: brightness(0.5);*/
 }
 
-.header {
+.home-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -17,38 +19,54 @@
     color: white; /* Set your text color */
 }
 
-.icon-container {
+.home-icon-container {
     margin: 0 10px; /* Adjust as needed */
     display: flex;
     alignItems: center;
 }
 
-.icon {
+.home-icon {
     width: 50px; /* Adjust icon size */
     height: 50px;
 }
 
-.siteName {
-    font: 1.2rem "JetBrains Mono";
+.home-site-name {
+    font: 1.2rem 'Fira Code';
     color:  #B2DAFE;
 }
 
-.button-container {
+.home-button-container {
     display: flex;
 }
 
-.button {
+.home-button {
     margin: 0 10px; /* Adjust spacing between buttons */
     padding: 8px 16px; /* Adjust padding as needed */
     border: 1px solid #B2DAFE;
     cursor: pointer;
     color: #B2DAFE; /* Set text color for normal state */
     background-color: transparent;
-    borderRadius: 10px;
-    fontFamily: 'JetBrains Mono'
+    fontFamily: 'Fira Code'
 }
 
-.content {
+.home-button:hover {
+    border: 1px solid #82C4FF;
+    color: #82C4FF;
+}
+
+.home-button:active {
+    border: 1px solid #6AB9FF;
+    color: #6AB9FF;
+}
+
+.home-button:disabled {
+    opacity: 0.5; /* Adjust opacity for disabled state */
+    background-color: #4F6170;
+    color: #92bcef;
+    cursor: not-allowed;
+}
+
+.home-content {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -56,10 +74,10 @@
     align-items: center;
 }
 
-.text {
-    width: 1065px;
+.home-text {
+    width: 1200px;
     height: 75px;
-    font: 4rem "JetBrains Mono";
+    font: 3rem 'Fira Code';
     color: #B2DAFE;
     text-align: center;
 }
