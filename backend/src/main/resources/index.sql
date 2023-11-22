@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS projects
     title        VARCHAR(255),
     created_at   TIMESTAMP DEFAULT NOW(),
     authenticated_only    BOOLEAN,
-    root_folder  INT
+    hidden_root_folder_id  INT
 );
 
 CREATE TABLE IF NOT EXISTS code_snippet
@@ -41,7 +41,7 @@ VALUES ('user1', 'password1'),
        ('admin1', 'adminpassword1'),
        ('admin2', 'adminpassword2');
 
-INSERT INTO projects (title, authenticated_only, root_folder)
+INSERT INTO projects (title, authenticated_only, hidden_root_folder_id)
 VALUES ('Session 1', true, 1),
        ('Session 2', false, 2),
        ('Session 3', true, 3);
