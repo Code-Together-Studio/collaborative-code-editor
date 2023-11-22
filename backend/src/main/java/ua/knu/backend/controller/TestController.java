@@ -33,23 +33,23 @@ public class TestController {
     }
 
     @GetMapping("/users")
-    public String getAllUsers(){
+    public String getAllUsers() {
         return userRepository.findAll().stream().map(User::toString).collect(Collectors.joining("\n"));
     }
 
     @GetMapping("/folders")
-    public String getAllFolders(){
+    public String getAllFolders() {
         return folderRepository.findAll().stream().map(Folder::toString).collect(Collectors.joining("\n"));
     }
 
     @GetMapping("/projects")
-    public String getAllProjects(){
+    public String getAllProjects() {
         return "OK 200";
         //return projectRepository.findAll().stream().map(Project::toString).collect(Collectors.joining("\n"));
     }
 
     @GetMapping("/codeSnippets")
-    public String getAllCodeSnippets(){
+    public String getAllCodeSnippets() {
         return codeSnippetRepository.findAll().stream().map(CodeSnippet::toString).collect(Collectors.joining("\n"));
     }
 }

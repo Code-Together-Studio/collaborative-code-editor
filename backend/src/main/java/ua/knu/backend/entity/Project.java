@@ -22,6 +22,9 @@ public class Project {
     @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "hidden_root_folder_id")
+    private Integer hiddenRootFolderId;
+
     @Column(name = "authenticated_only")
     private boolean authenticatedOnly;
 
