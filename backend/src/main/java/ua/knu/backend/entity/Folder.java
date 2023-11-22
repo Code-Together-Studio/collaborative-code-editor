@@ -38,6 +38,10 @@ public class Folder {
         this.createdAt = new Date();
     }
 
+    public void addChild(Folder childFolder){
+        childrenFolders.add(childFolder);
+    }
+
     @Override
     public String toString() {
         return "Folder{" +
