@@ -5,6 +5,7 @@ import ActiveProjects from './ActiveProjects';
 import Test from './Test';
 import Login from './Login';
 import Signup from "./Signup";
+import ProjectSetup from "./ProjectSetup";
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                 <Route exact path="/test" element={<Test/>}/>
                 <Route exact path="/login" element={<Login/>}/>
                 <Route exact path="/signup" element={<Signup/>}/>
+                <Route exact path="/projectSetup" element={<ProjectSetup/>}/>
             </Routes>
         </Router>
     )

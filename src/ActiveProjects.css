@@ -4,7 +4,7 @@
     height: 100vh; /* Set the app height to 100% of the viewport height */
     display: flex;
     flex-direction: column;
-    background-color: #252E39;
+    background-color: #181E26;
 }
 
 .active-projects-header {
@@ -41,6 +41,8 @@
     font: 3rem 'Fira Code';
     color: #B2DAFE;
     text-align: center;
+    font-weight: bold;
+    margin: 15px;
 }
 
 .active-projects-li{

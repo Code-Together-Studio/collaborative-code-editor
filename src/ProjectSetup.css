@@ -5,21 +5,22 @@ a {
     color: #1290FF;
 }
 
-.signup-header {
+.setup-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: white; /* Set your text color */
 }
 
-.login-body {
+
+.setup-body {
     height: 100vh; /* Set the app height to 100% of the viewport height */
     display: flex;
     flex-direction: column;
-    background-color: #252E39;
+    background-color: #181E26;
 }
 
-.login-input {
+.setup-input {
     width: 500px;
     height: 70px;
     border-radius: 10px;
@@ -31,11 +32,11 @@ a {
     font: 1.5rem 'Fira Code';
 }
 
-.login-input::placeholder {
+.setup-input::placeholder {
     color: #4F6170;
 }
 
-.login-button {
+.setup-button {
     width: 500px;
     height: 70px;
     border-radius: 10px;
@@ -47,21 +48,21 @@ a {
     font: 1.5rem 'Fira Code';
 }
 
-.login-button:hover {
+.setup-button:hover {
     background-color: #82C4FF;
 }
 
-.login-button:active {
+.setup-button:active {
     background-color: #6AB9FF;
 }
 
-.login-button-container {
+.setup-button-container {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.login-content {
+.setup-content {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -69,7 +70,7 @@ a {
     align-items: center;
 }
 
-.login-text {
+.setup-text {
     width: 829px;
     height: 63px;
     font: 3rem "Fira Code";
@@ -78,18 +79,34 @@ a {
     margin: 31px 0;
 }
 
-.login-text-small {
-    margin: 20px;
-    width: 403px;
-    height: 26px;
-    font: 1rem "Fira Code";
+
+
+label {
+    display: inline-block;
+    margin: 15px;
     color: #B2DAFE;
-    text-align: center;
+    font: 1.3rem 'Fira Code'
 }
 
-.login-body {
-    height: 100vh; /* Set the app height to 100% of the viewport height */
-    display: flex;
-    flex-direction: column;
-    background-color: #181E26;
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label::before {
+    content: "\00a0"; /* Add some space to make the checkbox visible */
+    display: inline-block;
+    border-radius: 10px;
+    border: 2.5px solid #B2DAFE;
+    width: 23px;
+    height: 23px;
+    background-color: #181E26; /* Set the background color when not checked */
+    margin-right: 10px; /* Add some space between the checkbox and the label text */
+    transform: translate(-20%, 9%);
+}
+
+/* Style the checkbox when checked */
+input[type="checkbox"]:checked + label::before {
+    background-color: #B2DAFE;
+    border-color: #B2DAFE;
 }

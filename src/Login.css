@@ -5,11 +5,19 @@ a {
     color: #1290FF;
 }
 
+.login-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white; /* Set your text color */
+}
+
+
 .login-body {
     height: 100vh; /* Set the app height to 100% of the viewport height */
     display: flex;
     flex-direction: column;
-    background-color: #252E39;
+    background-color: #181E26;
 }
 
 .login-input {
@@ -78,11 +86,4 @@ a {
     font: 1.2rem "Fira Code";
     color: #B2DAFE;
     text-align: center;
-}
-
-.login-body {
-    height: 100vh; /* Set the app height to 100% of the viewport height */
-    display: flex;
-    flex-direction: column;
-    background-color: #181E26;
 }

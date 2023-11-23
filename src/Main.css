@@ -41,7 +41,7 @@
     cursor: pointer;
     color: #B2DAFE; /* Set text color for normal state */
     background-color: transparent;
-    fontFamily: 'Fira Code'
+    font: 1rem 'Fira Code';
 }
 
 .button:hover {

@@ -4,7 +4,7 @@ import './Login.css';
 const Login = () => {
     return(
         <div className="login-body">
-            <div className="header">
+            <div className="login-header">
                 <div style={{display: "flex", alignItems: "center"}}>
                     <div className="icon-container">
                         <img className="icon" src="logo.png" alt="icon" className="icon"/>
