@@ -56,3 +56,31 @@
     font: 2rem 'Fira Code';
     color:  #1290FF;
 }
+
+.active-projects-pagination {
+    list-style: none;
+    display: flex;
+}
+
+.active-projects-pagination li {
+    margin: 0 5px;
+}
+
+.active-projects-pagination button {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid #B2DAFE;
+    cursor: pointer;
+    color: #B2DAFE;
+}
+
+.active-projects-pagination li.active button {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.active-projects-paginate-button{
+    background: transparent;
+    border: 1px solid #B2DAFE;
+}
