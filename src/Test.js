@@ -1,30 +1,41 @@
-import React, {useEffect, useState} from 'react';
-import './Main.css';
+import React, { useState } from 'react';
 
-/*const NestedList = ({ items }) => {
+const ListItem = ({ item }) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const toggleNestedList = () => {
+    const toggleSublist = () => {
         setIsOpen(!isOpen);
     };
 
     return (
-        <ul style={{listStyle: 'none'}}>
-            {items.map((item, index) => (
-                <li key={index} style={{ marginBottom: '10px'}}>
-                    {item.imageSrc === 'folder.png' && (
-                        <button className="buttonStyle" onClick={toggleNestedList}>
-                            {isOpen ? '-' : '>'}
-                        </button>
-                    )}
+        <div>
+            <div>
+                {item.imageSrc === 'folder.png' && (
+                <span><button className="buttonStyle" onClick={toggleSublist}>
+                    {isOpen ? '˅' : '>'}
+                </button></span>)}
+                <div>
                     <img src={item.imageSrc} alt={item.text}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
                     <span style={{color: "white"}}>{item.text}</span>
-                    {item.subitems && item.subitems.length > 0 && isOpen && (
-                        <NestedList items={item.subitems} />
-                    )}
-                </li>
-            ))}
-        </ul>
+                </div>
+            </div>
+            {isOpen && item.sublist && (
+                <ul>
+                    {item.sublist.map((subItem, index) => (
+                        <li key={index}>
+                            {subItem.sublist ? (
+                                <ListItem item={subItem} />
+                            ) : (
+                                <div>
+                                    <img src={subItem.imageSrc} alt={subItem.text}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
+                                    <span style={{color: "white"}}>{subItem.text}</span>
+                                </div>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
     );
 };
 
@@ -37,7 +48,7 @@ const Test = () => {
         {
             imageSrc: 'folder.png',
             text: 'Folder 1',
-            subitems: [
+            sublist: [
                 {
                     imageSrc: 'file.png',
                     text: 'File 1.1',
@@ -51,11 +62,11 @@ const Test = () => {
         {
             imageSrc: 'folder.png',
             text: 'Folder 2',
-            subitems: [
+            sublist: [
                 {
                     imageSrc: 'folder.png',
                     text: 'Folder 2.1',
-                    subitems: [
+                    sublist: [
                         {
                             imageSrc: 'file.png',
                             text: 'File 2.1.1',
@@ -72,113 +83,76 @@ const Test = () => {
 
     return (
         <div style={{backgroundColor: "black"}}>
-            <h1>Nested List Example</h1>
-            <NestedList items={data} />
+            <h2>List with Sublists</h2>
+            {data.map((item, index) => (
+                <ListItem key={index} item={item} />
+            ))}
+        </div>
+    );
+};
+
+export default Test;
+/*
+import React, { useState } from 'react';
+
+const ListItem = ({ item }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleSublist = () => {
+        setIsOpen(!isOpen);
+    };
+
+    return (
+        <div>
+            <div>
+                <button onClick={toggleSublist}>{isOpen ? '-' : '+'}</button>
+                {item.name}
+            </div>
+            {isOpen && item.sublist && (
+                <ul>
+                    {item.sublist.map((subItem, index) => (
+                        <li key={index}>
+                            {subItem.sublist ? (
+                                <ListItem item={subItem} />
+                            ) : (
+                                subItem.name
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+};
+
+const Test = () => {
+    const data = [
+        {
+            name: 'Item 1',
+            sublist: [
+                { name: 'Subitem 1.1', sublist: [{ name: 'Subitem 1.1.1', sublist: [{ name: 'Subitem 1.1.1.1' }] }] },
+                { name: 'Subitem 1.2' },
+                { name: 'Subitem 1.3' },
+            ],
+        },
+        {
+            name: 'Item 2',
+            sublist: [{ name: 'Subitem 2.1' }, { name: 'Subitem 2.2' }],
+        },
+        {
+            name: 'Item 3',
+            sublist: [{ name: 'Subitem 3.1' }, { name: 'Subitem 3.2' }],
+        },
+    ];
+
+    return (
+        <div>
+            <h2>List with Sublists</h2>
+            {data.map((item, index) => (
+                <ListItem key={index} item={item} />
+            ))}
         </div>
     );
 };
 
 export default Test;*/
-
-const NestedList = ({ items }) => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleNestedList = () => {
-        setIsOpen(!isOpen);
-    };
-
-    return (
-        <ul style={{listStyle: 'none'}}>
-            {items.map((item, index) => (
-                <li key={index} style={{ marginBottom: '10px'}}>
-                    {item.imageSrc === 'folder.png' && (
-                        <button className="buttonStyle" onClick={item.toggleNestedList}>
-                            {item.isOpen ? '-' : '>'}
-                        </button>
-                    )}
-                    <img src={item.imageSrc} alt={item.text} style={{width: '30px', height: '30px', marginRight: '10px'}}/>
-                    <span style={{color: "white"}}>{item.text}</span>
-                    {item.subitems && item.subitems.length > 0 && item.isOpen && (
-                        <NestedList items={item.subitems} />
-                    )}
-                </li>
-            ))}
-        </ul>
-    );
-};
-
-const App = () => {
-    const [data, setData] = useState([
-        {
-            imageSrc: 'file.png',
-            text: 'File 1',
-        },
-        {
-            imageSrc: 'folder.png',
-            text: 'Folder 1',
-            isOpen: false, // Initially closed
-            subitems: [
-                {
-                    imageSrc: 'file.png',
-                    text: 'File 1.1',
-                },
-                {
-                    imageSrc: 'file.png',
-                    text: 'File 1.2',
-                },
-            ],
-            toggleNestedList: () => {
-                setData((prevData) => {
-                    const updatedData = [...prevData];
-                    updatedData[1].isOpen = !updatedData[1].isOpen;
-                    return updatedData;
-                })
-            },
-        },
-        {
-            imageSrc: 'folder.png',
-            text: 'Folder 2',
-            isOpen: false, // Initially closed
-            subitems: [
-                {
-                    imageSrc: 'folder.png',
-                    text: 'Folder 2.1',
-                    isOpen: false, // Initially closed
-                    subitems: [
-                        {
-                            imageSrc: 'file.png',
-                            text: 'File 2.1.1',
-                        },
-                    ],
-                    toggleNestedList: () => {
-                        setData((prevData) => {
-                            const updatedData = [...prevData];
-                            updatedData[2].subitems[0].isOpen = !updatedData[2].subitems[0].isOpen;
-                            return updatedData;
-                        })
-                    },
-                },
-                {
-                    imageSrc: 'file.png',
-                    text: 'File 2.1',
-                },
-            ],
-            toggleNestedList: () => {
-                setData((prevData) => {
-                    const updatedData = [...prevData];
-                    updatedData[2].isOpen = !updatedData[2].isOpen;
-                    return updatedData;
-                })
-            },
-        },
-    ]);
-
-    return (
-        <div style={{backgroundColor: "black"}}>
-            <h1>Nested List Example</h1>
-            <NestedList items={data} />
-        </div>
-    );
-};
-
-export default App;

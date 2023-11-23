@@ -1,56 +1,88 @@
 import React, {useEffect, useState} from 'react';
 import './Main.css';
 
-const NestedList = ({ items }) => {
+const ListItem = ({ item }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleSublist = () => {
+        setIsOpen(!isOpen);
+    };
+
     return (
-        <ul>
-            {items.map((item, index) => (
-                <li key={index}>
-                    {item.text}
-                    {item.subitems && item.subitems.length > 0 && (
-                        <NestedList items={item.subitems} />
-                    )}
-                </li>
-            ))}
-        </ul>
-        /*<ul style={{listStyle: 'none', padding: 0}}>
-            {items.map((item, index) => (
-                <li key={index} style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
-                    <button className="buttonStyle" onClick={toggleList}> ></button>
-                    <img
-                        src={item.imageSrc}
-                        style={{width: '30px', height: '30px', marginRight: '10px'}}
-                    />
-                    <span style={{color: "white"}}>{item.text}</span>
-                    {/!*{isOpen && (
-                        <ul>
-                            <li>Item 1</li>
-                            <li>Item 2</li>
-                            <li>Item 3</li>
-                        </ul>
-                    )}*!/}
-                </li>
-            ))}
-        </ul>*/
+        <div>
+            <div className="main-list-item">
+                {item.imageSrc === 'folder.png' && (
+                    <button className="main-list-button" onClick={toggleSublist}>
+                        {isOpen ? '˅' : '>'}
+                    </button>
+                )}
+                <div className="main-list-item">
+                    <img src={item.imageSrc} alt={item.text}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
+                    <div className="main-list-text">{item.text}</div>
+                </div>
+            </div>
+            {isOpen && item.sublist && (
+                <ul style={{listStyleType: "none"}}>
+                    {item.sublist.map((subItem, index) => (
+                        <li key={index}>
+                            {subItem.sublist ? (
+                                <ListItem item={subItem} />
+                            ) : (
+                                <div className="main-list-item">
+                                    <img src={subItem.imageSrc} alt={subItem.text}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
+                                    <span className="main-list-text">{subItem.text}</span>
+                                </div>
+                            )}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
     );
 };
 
-const Main = () => {
+const data = [
+    {
+        imageSrc: 'file.png',
+        text: 'File 1',
+    },
+    {
+        imageSrc: 'folder.png',
+        text: 'Folder 1',
+        sublist: [
+            {
+                imageSrc: 'file.png',
+                text: 'File 1.1',
+            },
+            {
+                imageSrc: 'file.png',
+                text: 'File 1.2',
+            },
+        ],
+    },
+    {
+        imageSrc: 'folder.png',
+        text: 'Folder 2',
+        sublist: [
+            {
+                imageSrc: 'folder.png',
+                text: 'Folder 2.1',
+                sublist: [
+                    {
+                        imageSrc: 'file.png',
+                        text: 'File 2.1.1',
+                    },
+                ],
+            },
+            {
+                imageSrc: 'file.png',
+                text: 'File 2.1',
+            },
+        ],
+    },
+];
 
-    const [isOpen, setIsOpen] = useState(false);
-    const items = [
-        {
-            imageSrc: 'folder.png',
-            text: 'Folder 1',
-        },
-        {
-            imageSrc: 'file.png',
-            text: 'File 1',
-        },
-    ];
-    const toggleList = () => {
-        setIsOpen(!isOpen);
-    };
+const Main = () => {
 
     return (
         <div className="app">
@@ -68,35 +100,9 @@ const Main = () => {
             </div>
             <div className="main-content">
                 <div className="main-left-block">
-                    <div>
-                        {/*<button onClick={toggleList}>Toggle List</button>
-                        {isOpen && (
-                            <ul>
-                                <li>Item 1</li>
-                                <li>Item 2</li>
-                                <li>Item 3</li>
-                            </ul>
-                        )}*!/*/}
-                        <ul style={{listStyle: 'none', padding: 0}}>
-                            {items.map((item, index) => (
-                                <li key={index} style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
-                                    <button className="main-button-style" onClick={toggleList}> ></button>
-                                    <img
-                                        src={item.imageSrc}
-                                        style={{width: '30px', height: '30px', marginRight: '10px'}}
-                                    />
-                                    <span style={{color: "white"}}>{item.text}</span>
-                                    {isOpen && (
-                                        <ul>
-                                            <li>Item 1</li>
-                                            <li>Item 2</li>
-                                            <li>Item 3</li>
-                                        </ul>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {data.map((item, index) => (
+                        <ListItem key={index} item={item} />
+                    ))}
                 </div>
                 <div className="main-right-block">
                     <textarea className="main-textarea"></textarea>
