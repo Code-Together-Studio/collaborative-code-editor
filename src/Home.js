@@ -18,14 +18,12 @@ const Home = () => {
             </div>
             <div className="home-content">
                 <div className="home-text"> Code Together, Create Together:</div>
-                <div className="home-text" style={{marginBottom: "100px"}}> Where Collaboration Fuels Innovation.</div>
+                <div className="home-text" style={{marginBottom: "30px"}}> Where Collaboration Fuels Innovation.</div>
                 <div className="home-button-container">
-                    <button className="home-button" style={{width: "436px", height: "96px", borderRadius: "40px",
-                        fontFamily: 'JetBrains Mono', fontSize: '3rem', margin: "0 30px"}} disabled>
+                    <button className="home-button-center" disabled>
                         Create Project
                     </button>
-                    <a href="activeProjects"><button className="home-button" style={{width: "436px", height: "96px", borderRadius: "40px",
-                        fontFamily: 'JetBrains Mono', fontSize: '3rem', margin: "0 30px"}} >
+                    <a href="activeProjects"><button className="home-button-center">
                         Open Project
                     </button></a>
                 </div>
