@@ -1,4 +1,4 @@
-package ua.knu.backend.controller;
+package ua.knu.backend.controller.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.knu.backend.web.security.JwtAuthenticationResponse;
-import ua.knu.backend.web.security.RefreshTokenRequest;
-import ua.knu.backend.web.security.SignInRequest;
-import ua.knu.backend.web.security.SignUpRequest;
+import ua.knu.backend.dto.jwt.JwtAuthenticationResponse;
+import ua.knu.backend.dto.jwt.RefreshTokenRequest;
+import ua.knu.backend.dto.jwt.SignInRequest;
+import ua.knu.backend.dto.jwt.SignUpRequest;
 import ua.knu.backend.entity.User;
 import ua.knu.backend.service.AuthenticationService;
 

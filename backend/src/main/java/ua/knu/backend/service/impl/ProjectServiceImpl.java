@@ -1,5 +1,6 @@
 package ua.knu.backend.service.impl;
 
+import org.springframework.stereotype.Service;
 import ua.knu.backend.entity.Project;
 import ua.knu.backend.exception.project.ProjectByIdNotFoundException;
 import ua.knu.backend.exception.project.ProjectByNameNotFoundException;
@@ -10,6 +11,7 @@ import ua.knu.backend.service.ProjectService;
 
 import java.util.List;
 
+@Service
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;

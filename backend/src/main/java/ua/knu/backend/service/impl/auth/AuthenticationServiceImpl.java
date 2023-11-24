@@ -1,14 +1,14 @@
-package ua.knu.backend.service.impl;
+package ua.knu.backend.service.impl.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ua.knu.backend.web.security.JwtAuthenticationResponse;
-import ua.knu.backend.web.security.RefreshTokenRequest;
-import ua.knu.backend.web.security.SignInRequest;
-import ua.knu.backend.web.security.SignUpRequest;
+import ua.knu.backend.dto.jwt.JwtAuthenticationResponse;
+import ua.knu.backend.dto.jwt.RefreshTokenRequest;
+import ua.knu.backend.dto.jwt.SignInRequest;
+import ua.knu.backend.dto.jwt.SignUpRequest;
 import ua.knu.backend.entity.User;
 import ua.knu.backend.repository.UserRepository;
 import ua.knu.backend.service.AuthenticationService;
