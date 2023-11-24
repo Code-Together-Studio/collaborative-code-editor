@@ -1,4 +1,4 @@
-package ua.knu.backend.dto;
+package ua.knu.backend.dto.jwt;
 
 import lombok.Data;
 

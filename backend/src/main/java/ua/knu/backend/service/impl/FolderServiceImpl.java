@@ -1,6 +1,7 @@
 package ua.knu.backend.service.impl;
 
 import org.hibernate.Hibernate;
+import org.springframework.stereotype.Service;
 import ua.knu.backend.entity.Folder;
 import ua.knu.backend.entity.Project;
 import ua.knu.backend.exception.folder.FolderByIdNotFoundException;
@@ -14,6 +15,7 @@ import ua.knu.backend.service.FolderService;
 
 import java.util.List;
 
+@Service
 public class FolderServiceImpl implements FolderService {
 
     private final FolderRepository folderRepository;

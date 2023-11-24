@@ -1,4 +1,4 @@
-package ua.knu.backend.service.impl;
+package ua.knu.backend.service.impl.auth;
 
 
 import io.jsonwebtoken.Claims;

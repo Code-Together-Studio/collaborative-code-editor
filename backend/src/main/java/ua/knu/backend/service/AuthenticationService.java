@@ -1,9 +1,9 @@
 package ua.knu.backend.service;
 
-import ua.knu.backend.dto.JwtAuthenticationResponse;
-import ua.knu.backend.dto.RefreshTokenRequest;
-import ua.knu.backend.dto.SignInRequest;
-import ua.knu.backend.dto.SignUpRequest;
+import ua.knu.backend.dto.jwt.JwtAuthenticationResponse;
+import ua.knu.backend.dto.jwt.RefreshTokenRequest;
+import ua.knu.backend.dto.jwt.SignInRequest;
+import ua.knu.backend.dto.jwt.SignUpRequest;
 import ua.knu.backend.entity.User;
 
 public interface AuthenticationService {
