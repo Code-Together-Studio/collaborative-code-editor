@@ -1,4 +1,4 @@
-package ua.knu.backend.dto;
+package ua.knu.backend.web.security;
 
 import lombok.Data;
 
@@ -6,5 +6,4 @@ import lombok.Data;
 public class JwtAuthenticationResponse {
     private String token;
     private String refreshToken;
-
 }

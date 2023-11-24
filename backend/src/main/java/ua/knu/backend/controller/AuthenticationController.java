@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.knu.backend.dto.JwtAuthenticationResponse;
-import ua.knu.backend.dto.RefreshTokenRequest;
-import ua.knu.backend.dto.SignInRequest;
-import ua.knu.backend.dto.SignUpRequest;
+import ua.knu.backend.web.security.JwtAuthenticationResponse;
+import ua.knu.backend.web.security.RefreshTokenRequest;
+import ua.knu.backend.web.security.SignInRequest;
+import ua.knu.backend.web.security.SignUpRequest;
 import ua.knu.backend.entity.User;
 import ua.knu.backend.service.AuthenticationService;
 
