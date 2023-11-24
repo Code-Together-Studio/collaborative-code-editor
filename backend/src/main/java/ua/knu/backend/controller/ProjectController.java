@@ -52,6 +52,4 @@ public class ProjectController {
         projectService.deleteProject(title);
         return "200 OK";
     }
-
-
 }

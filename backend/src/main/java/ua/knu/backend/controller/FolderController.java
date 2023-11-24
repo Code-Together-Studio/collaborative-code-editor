@@ -44,5 +44,4 @@ public class FolderController {
     public String getChildFolders(@PathVariable Integer parentFolderId){
         return folderService.getChildFolders(parentFolderId).stream().map(Folder::toString).collect(Collectors.joining("\n"));
     }
-
 }
