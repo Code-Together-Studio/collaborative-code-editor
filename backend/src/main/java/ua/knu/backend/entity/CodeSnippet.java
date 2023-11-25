@@ -11,7 +11,6 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-//@NoArgsConstructor
 @Entity(name = "Code_Snippet")
 public class CodeSnippet {
 
