@@ -1,9 +1,9 @@
-package ua.knu.backend.dto.jwt;
+package ua.knu.backend.web.security;
 
 import lombok.Data;
 
 @Data
-public class SignUpRequest {
+public class SignInRequest {
     private String username;
     private String password;
 }
