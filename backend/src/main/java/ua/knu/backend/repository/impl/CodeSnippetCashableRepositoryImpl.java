@@ -1,25 +1,42 @@
 package ua.knu.backend.repository.impl;
 
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Repository;
 import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.repository.CodeSnippetCashableRepository;
 import ua.knu.backend.repository.CodeSnippetRepository;
 
-import java.util.List;
+import java.util.Objects;
 
+@Repository
 public class CodeSnippetCashableRepositoryImpl implements CodeSnippetCashableRepository {
 
-    @Override
-    public CodeSnippet getCodeSnippetById(Integer id) {
-        return null;
+    private final RedisTemplate<String, String> redisTemplate;
+
+    private final CodeSnippetRepository codeSnippetRepository;
+
+    public CodeSnippetCashableRepositoryImpl(RedisTemplate<String, String> redisTemplate, CodeSnippetRepository codeSnippetRepository) {
+        this.redisTemplate = redisTemplate;
+        this.codeSnippetRepository = codeSnippetRepository;
     }
 
     @Override
-    public List<CodeSnippet> getCodeSnippetsFromFolder(Integer id) {
-        return null;
+    public String getContentById(Integer id) {
+        String content = redisTemplate.opsForValue().get(generateKey(id));
+        if (Objects.nonNull(content)){
+            return content;
+        }
+        CodeSnippet codeSnippet = codeSnippetRepository.findById(id).get();
+        redisTemplate.opsForValue().set(generateKey(id), codeSnippet.getContent());
+        return codeSnippet.getContent();
     }
 
     @Override
-    public void saveChanges(CodeSnippet codeSnippet) {
+    public void updateContentById(Integer id, String content) {
+        redisTemplate.opsForValue().set(generateKey(id), content);
+    }
 
+    private String generateKey(Integer id){
+        return "codeSnippetKey="+id;
     }
 }
