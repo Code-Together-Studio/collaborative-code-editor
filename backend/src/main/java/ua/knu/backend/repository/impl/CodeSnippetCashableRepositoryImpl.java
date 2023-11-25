@@ -36,6 +36,11 @@ public class CodeSnippetCashableRepositoryImpl implements CodeSnippetCashableRep
         redisTemplate.opsForValue().set(generateKey(id), content);
     }
 
+    @Override
+    public void deleteById(Integer id) {
+        redisTemplate.delete(generateKey(id));
+    }
+
     private String generateKey(Integer id){
         return "codeSnippetKey="+id;
     }
