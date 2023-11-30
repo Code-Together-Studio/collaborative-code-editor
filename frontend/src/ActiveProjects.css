@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
+.active-projects {
+    height: 100vh; /* Set the app height to 100% of the viewport height */
+    display: flex;
+    flex-direction: column;
+    background-color: #181E26;
+}
+
+.active-projects-header {
+    background-color: transparent;
+}
+
+.active-projects-icon-container {
+    margin: 0 10px; /* Adjust as needed */
+    display: flex;
+    alignItems: center;
+}
+
+.active-projects-icon {
+    width: 50px; /* Adjust icon size */
+    height: 50px;
+}
+
+.active-projects-site-name {
+    font: 1.2rem 'Fira Code';
+    color:  #B2DAFE;
+}
+
+.active-projects-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.active-projects-text {
+    width: 667px;
+    height: 63px;
+    font: 3rem 'Fira Code';
+    color: #B2DAFE;
+    text-align: center;
+    font-weight: bold;
+    margin: 15px;
+}
+
+.active-projects-li{
+    border: 1px solid #B2DAFE;
+    text-align: center;
+    width: 900px;
+    height: 65px;
+}
+
+.active-projects-li-text {
+    font: 2rem 'Fira Code';
+    color:  #1290FF;
+}
+
+.active-projects-pagination {
+    list-style: none;
+    display: flex;
+}
+
+.active-projects-pagination li {
+    margin: 0 5px;
+}
+
+.active-projects-pagination button {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid #B2DAFE;
+    cursor: pointer;
+    color: #B2DAFE;
+}
+
+.active-projects-pagination li.active button {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.active-projects-paginate-button{
+    background: transparent;
+    border: 1px solid #B2DAFE;
+}
