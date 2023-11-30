@@ -32,6 +32,8 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.springframework.boot:spring-boot-starter-data-redis:3.2.0")
 
+    implementation("redis.clients:jedis:5.1.0")
+
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
