@@ -20,15 +20,17 @@
 }
 
 .home-icon-container {
-    margin: 0 10px; /* Adjust as needed */
+    margin-left: 7px;
     display: flex;
-    alignItems: center;
+    align-items: center;
 }
 
 .home-icon {
     width: 50px; /* Adjust icon size */
     height: 50px;
+    margin-left: 12px;
 }
+
 
 .home-site-name {
     font: 1.2rem 'Fira Code';

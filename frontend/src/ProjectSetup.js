@@ -9,7 +9,7 @@ const ProjectSetup = () => {
                     <div className="icon-container">
                         <img className="icon" src="logo.png" alt="icon" className="icon"/>
                     </div>
-                    <h3 className="siteName">CodeTogether</h3>
+                    <a href="/home" className="siteName">CodeTogether</a>
                 </div>
             </div>
             <div className="setup-content">

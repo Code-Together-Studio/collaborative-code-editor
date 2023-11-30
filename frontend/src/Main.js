@@ -22,7 +22,7 @@ const ListItem = ({ item }) => {
                 </div>
             </div>
             {isOpen && item.sublist && (
-                <ul style={{listStyleType: "none"}}>
+                <ul style={{listStyleType: "none", margin:"0"}}>
                     {item.sublist.map((subItem, index) => (
                         <li key={index}>
                             {subItem.sublist ? (
@@ -89,9 +89,10 @@ const Main = () => {
             <div className="header">
                 <div style={{display: "flex", alignItems: "center"}}>
                     <div className="icon-container">
+                        <img className="icon" style={{height: "35px", width:"auto"}} src="menu.png" alt="icon"/>
                         <img className="icon" src="logo.png" alt="icon"/>
                     </div>
-                    <h3 className="siteName">CodeTogether</h3>
+                    <a href="/home" className="siteName">CodeTogether</a>
                 </div>
                 <div className="button-container">
                     <a href="signup"><button className="button" style={{borderRadius: "10px"}} >Sign up</button></a>
@@ -100,6 +101,7 @@ const Main = () => {
             </div>
             <div className="main-content">
                 <div className="main-left-block">
+                    <h1 className="siteName">ProjectName</h1>
                     {data.map((item, index) => (
                         <ListItem key={index} item={item} />
                     ))}

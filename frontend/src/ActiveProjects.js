@@ -91,7 +91,7 @@ const Home = () => {
                     <div className="home-icon-container">
                         <img className="active-projects-icon" src="logo.png" alt="icon" className="icon"/>
                     </div>
-                    <h3 className="active-projects-site-name">CodeTogether</h3>
+                    <a href="/home" className="siteName">CodeTogether</a>
                 </div>
             </div>
             <div className="active-projects-content">
