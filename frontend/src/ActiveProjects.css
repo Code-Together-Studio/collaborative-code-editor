@@ -47,10 +47,12 @@
 
 .active-projects-li{
     border: 1px solid #B2DAFE;
-    text-align: center;
     width: 900px;
     height: 65px;
+    text-align: left;
+    padding: 10px 0 0 20px;
 }
+
 
 .active-projects-li-text {
     font: 2rem 'Fira Code';
