@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
+a {
+    text-decoration: none;
+    color: #1290FF;
+}
+
+.setup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white; /* Set your text color */
+}
+
+
+.setup-body {
+    height: 100vh; /* Set the app height to 100% of the viewport height */
+    display: flex;
+    flex-direction: column;
+    background-color: #181E26;
+}
+
+.setup-input {
+    width: 500px;
+    height: 70px;
+    border-radius: 10px;
+    margin: 15px;
+    border: 1px solid #B2DAFE;
+    color: #B2DAFE;
+    background-color: transparent;
+    text-align: center;
+    font: 1.5rem 'Fira Code';
+}
+
+.setup-input::placeholder {
+    color: #4F6170;
+}
+
+.setup-button {
+    width: 500px;
+    height: 70px;
+    border-radius: 10px;
+    margin: 15px;
+    border: 1px solid #B2DAFE;
+    cursor: pointer;
+    color: #1C3F69;
+    background-color: #B2DAFE;
+    font: 1.5rem 'Fira Code';
+}
+
+.setup-button:hover {
+    background-color: #82C4FF;
+}
+
+.setup-button:active {
+    background-color: #6AB9FF;
+}
+
+.setup-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.setup-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.setup-text {
+    width: 829px;
+    height: 63px;
+    font: 3rem "Fira Code";
+    color: #B2DAFE;
+    text-align: center;
+    margin: 31px 0;
+}
+
+
+
+label {
+    display: inline-block;
+    margin: 15px;
+    color: #B2DAFE;
+    font: 1.3rem 'Fira Code'
+}
+
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label::before {
+    content: "\00a0"; /* Add some space to make the checkbox visible */
+    display: inline-block;
+    border-radius: 10px;
+    border: 2.5px solid #B2DAFE;
+    width: 23px;
+    height: 23px;
+    background-color: #181E26; /* Set the background color when not checked */
+    margin-right: 10px; /* Add some space between the checkbox and the label text */
+    transform: translate(-20%, 9%);
+}
+
+/* Style the checkbox when checked */
+input[type="checkbox"]:checked + label::before {
+    background-color: #B2DAFE;
+    border-color: #B2DAFE;
+}
