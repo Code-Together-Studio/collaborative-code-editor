@@ -9,7 +9,7 @@ const Home = () => {
                     <div className="home-icon-container">
                         <img className="home-icon" src="logo.png" alt="icon"/>
                     </div>
-                    <h3 className="home-site-name">CodeTogether</h3>
+                    <a href="/home" className="siteName">CodeTogether</a>
                 </div>
                 <div className="home-button-container">
                     <a href="signup"><button className="home-button" style={{borderRadius: "10px"}} >Sign up</button></a>
