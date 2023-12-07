@@ -15,6 +15,8 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder }) => {
         if (!isOpen) {
             const childFolders = await fetchChildFolders(item.id);
             setSubItems(childFolders);
+            // const folderFiles = await fetchFiles(item.id);
+            // setFiles(folderFiles);
         }
     };
 

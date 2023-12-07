@@ -5,6 +5,9 @@ import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.service.CodeSnippetService;
 import ua.knu.backend.web.dto.CodeSnippetDto;
 import ua.knu.backend.web.mapper.CodeSnippetMapper;
+import ua.knu.backend.web.mapper.ProjectMapper;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/code-snippet")
@@ -24,6 +27,11 @@ public class CodeSnippetController {
     @GetMapping("/{id}")
     public CodeSnippetDto getCodeSnippedById(@PathVariable("id") Integer id){
         return CodeSnippetMapper.toDto(codeSnippetService.getCodeSnippetById(id));
+    }
+
+    @GetMapping("/folder/{folderId}")
+    public List<CodeSnippetDto> getCodeSnippedByFolderId(@PathVariable("folderId") Integer folderId){
+        return codeSnippetService.getCodeSnippetsByFolderId(folderId).stream().map(CodeSnippetMapper::toDto).toList();
     }
 
     @PostMapping("/{id}/content")

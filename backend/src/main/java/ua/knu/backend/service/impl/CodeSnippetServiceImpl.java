@@ -7,6 +7,7 @@ import ua.knu.backend.repository.CodeSnippetRepository;
 import ua.knu.backend.service.CodeSnippetService;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class CodeSnippetServiceImpl implements CodeSnippetService {
@@ -30,6 +31,10 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
         return codeSnippetRepository.findById(id).get();
     }
 
+    @Override
+    public List<CodeSnippet> getCodeSnippetsByFolderId(Integer folderId) {
+        return codeSnippetRepository.findByFolderId(folderId);
+    }
     @Override
     public void updateContentById(Integer id, String content) {
         codeSnippetCashableRepository.updateContentById(id, content);
