@@ -2,38 +2,56 @@ import React, {useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import './Project.css';
 
-const ListItem = ({ item }) => {
+const ListItem = ({ item, fetchChildFolders, onCreateFolder }) => {
     const [isOpen, setIsOpen] = useState(false);
-
-    const toggleSublist = () => {
+    const [subItems, setSubItems] = useState([]);
+    
+/*
+    const [showContextMenu, setShowContextMenu] = useState(false);
+    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+*/
+    const toggleSublist = async () => {
         setIsOpen(!isOpen);
+        if (!isOpen) {
+            const childFolders = await fetchChildFolders(item.id);
+            setSubItems(childFolders);
+        }
     };
 
+/*
+    const handleContextMenu = (e) => {
+        e.preventDefault();
+        setShowContextMenu(true);
+        setContextMenuPosition({ x: e.pageX, y: e.pageY });
+    };
+
+    const handleCreateFolder = () => {
+        // createFolder(item.id);
+        console.log('Creating folder' + `${item.id}`)
+        setShowContextMenu(false);
+    };
+*/
     return (
         <div>
             <div className="main-list-item">
-                {item.imageSrc === '/folder.png' && (
+                {(
                     <button className="main-list-button" onClick={toggleSublist}>
                         {isOpen ? '˅' : '>'}
                     </button>
                 )}
                 <div className="main-list-item">
-                    <img src={item.imageSrc} alt={item.text}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
-                    <div className="main-list-text">{item.text}</div>
+                    <img src='/folder.png' alt={item.name}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
+                    <div className="main-list-text">{item.name}</div>
                 </div>
+                {item.isFolder || true && (
+                    <button className="create-folder-button" onClick={() => onCreateFolder(item.id, subItems.length)}>+</button>
+                )}
             </div>
-            {isOpen && item.sublist && (
+            {isOpen && subItems && (
                 <ul style={{listStyleType: "none", margin:"0"}}>
-                    {item.sublist.map((subItem, index) => (
+                    {subItems.map((subItem, index) => (
                         <li key={index}>
-                            {subItem.sublist ? (
-                                <ListItem item={subItem} />
-                            ) : (
-                                <div className="main-list-item">
-                                    <img src={subItem.imageSrc} alt={subItem.text}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
-                                    <span className="main-list-text">{subItem.text}</span>
-                                </div>
-                            )}
+                            <ListItem item={subItem} fetchChildFolders={fetchChildFolders} onCreateFolder={onCreateFolder} />
                         </li>
                     ))}
                 </ul>
@@ -85,9 +103,42 @@ const data = [
 
 const Project = () => {
     const { projectId } = useParams();
+    const [rootFolders, setRootFolders] = useState([]);
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const jwtToken = localStorage.getItem('jwtToken');
+
+    const fetchChildFolders = async (folderId) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${folderId}/child-folders`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.log('Error fetching child folders:', error);
+            return [];
+        }
+    };
+    
+    useEffect(() => {
+        const fetchRootFolders = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${projectId}/project-root-folders`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const folders = await response.json();
+                setRootFolders(folders);
+            } catch (error) {
+                console.log('Error fetching project root folders:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRootFolders();
+    }, [projectId]);
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -112,6 +163,27 @@ const Project = () => {
         return <div>Loading...</div>;
     }
 
+    const createFolder = async (parentId, length) => {
+        try {
+            const formData = new FormData();
+            formData.append('parentFolderId', parentId);
+            formData.append('name', 'New folder ' + `${length + 1}`);
+
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/create`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                console.log('Folder created successfully');
+            } else {
+                console.error('Failed to create folder');
+            }
+        } catch (error) {
+            console.error('Error creating folder:', error);
+        }
+    };
+
     return (
         <div className="app">
             <div className="header">
@@ -134,8 +206,8 @@ const Project = () => {
             <div className="main-content">
                 <div className="main-left-block">
                     <h1 className="siteName">{project ? project.title : 'Project'}</h1>
-                    {data.map((item, index) => (
-                        <ListItem key={index} item={item} />
+                    {rootFolders.map((item, index) => (
+                        <ListItem key={index} item={item} fetchChildFolders={fetchChildFolders} onCreateFolder={createFolder} />
                     ))}
                 </div>
                 <div className="main-right-block">

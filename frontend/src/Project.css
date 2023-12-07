@@ -126,3 +126,20 @@
   font: 1.2rem 'Fira Code';
   color: white;
 }
+
+.create-folder-button {
+  margin: 10px 15px;
+  padding: 0 4px;
+  border: 1px solid #B2DAFE;
+  cursor: pointer;
+  color: #B2DAFE;
+  background-color: transparent;
+  font: 0.7rem 'Fira Code';
+  max-height: 20px;
+}
+
+.create-folder-button:hover {
+  border: 1px solid #82C4FF;
+  color: #82C4FF;
+}
+
