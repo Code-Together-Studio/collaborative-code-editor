@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import './Project.css';
 
@@ -85,6 +85,32 @@ const data = [
 
 const Project = () => {
     const { projectId } = useParams();
+    const [project, setProject] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    useEffect(() => {
+        const fetchProject = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/projects/${projectId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const projectData = await response.json();
+                setProject(projectData);
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProject();
+    }, [projectId]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="app">
@@ -97,13 +123,17 @@ const Project = () => {
                     <a href="/home" className="siteName">CodeTogether</a>
                 </div>
                 <div className="button-container">
-                    <a href="signup"><button className="button" style={{borderRadius: "10px"}} >Sign up</button></a>
-                    <a href="login"><button className="button" style={{borderRadius: "10px"}} >Log in</button></a>
+                    {!jwtToken && (
+                        <>
+                            <a href="signup"><button className="home-button" style={{borderRadius: "10px"}} >Sign up</button></a>
+                            <a href="login"><button className="home-button" style={{borderRadius: "10px"}} >Log in</button></a>
+                        </>
+                    )}
                 </div>
             </div>
             <div className="main-content">
                 <div className="main-left-block">
-                    <h1 className="siteName">{projectId}</h1>
+                    <h1 className="siteName">{project ? project.title : 'Project'}</h1>
                     {data.map((item, index) => (
                         <ListItem key={index} item={item} />
                     ))}

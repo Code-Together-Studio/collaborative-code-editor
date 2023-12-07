@@ -59,7 +59,10 @@ const Home = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/projects/not-required-authentication`);
+                const jwtToken = localStorage.getItem('jwtToken');
+                const endpoint = jwtToken ? '/projects/all' : '/projects/not-required-authentication';
+                const url = `${process.env.REACT_APP_BACKEND_URL}${endpoint}`;
+                const response = await fetch(url);
                 console.log(response)
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
