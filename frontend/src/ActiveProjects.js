@@ -83,6 +83,7 @@ const Home = () => {
     };
 
     const handleProjectClick = (projectId) => {
+        // Maybe use history
         window.location.href = `/project/${projectId}`;
     };
 
