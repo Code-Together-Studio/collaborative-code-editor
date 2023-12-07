@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './ActiveProjects.css';
 
 const Pagination = ({ itemsPerPage, totalItems, paginate }) => {
@@ -52,36 +52,38 @@ const Pagination = ({ itemsPerPage, totalItems, paginate }) => {
 
 
 const Home = () => {
-    const items = [
-        {
-            text: 'Project 1',
-        },
-        {
-            text: 'Project 2',
-        },
-        {
-            text: 'Project 3',
-        },
-        {
-            text: 'Project 4',
-        },
-        {
-            text: 'Project 5',
-        },
-        {
-            text: 'Project 6',
-        },
-    ];
-
+    const [projects, setProjects] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5; // Adjust as needed
+    const itemsPerPage = 5;
+    
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/projects/not-required-authentication`);
+                console.log(response)
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                setProjects(data);
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            }
+        };
 
+        fetchProjects();
+    }, []);
+    
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = projects.slice(indexOfFirstItem, indexOfLastItem);
 
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
+    };
+
+    const handleProjectClick = (projectId) => {
+        window.location.href = `/project/${projectId}`;
     };
 
     return(
@@ -89,7 +91,7 @@ const Home = () => {
             <div className="active-projects-header">
                 <div style={{display: "flex", alignItems: "center"}}>
                     <div className="home-icon-container">
-                        <img className="active-projects-icon" src="logo.png" alt="icon" className="icon"/>
+                        <img className="active-projects-icon icon" src="logo.png" alt="icon"/>
                     </div>
                     <a href="/home" className="siteName">CodeTogether</a>
                 </div>
@@ -97,15 +99,15 @@ const Home = () => {
             <div className="active-projects-content">
                 <div className="active-projects-text"> List of active projects </div>
                 <ul style={{listStyle: 'none'}}>
-                    {currentItems.map((item, index) => (
-                        <li key={index} className="active-projects-li">
-                            <span className="active-projects-li-text">{item.text}</span>
+                    {currentItems.map((item) => (
+                        <li key={item.id} className="active-projects-li" onClick={() => handleProjectClick(item.id)}>
+                            <span className="active-projects-li-text">{item.title}</span>
                         </li>
                     ))}
                 </ul>
                 <Pagination
                     itemsPerPage={itemsPerPage}
-                    totalItems={items.length}
+                    totalItems={projects.length}
                     paginate={paginate}
                 />
             </div>

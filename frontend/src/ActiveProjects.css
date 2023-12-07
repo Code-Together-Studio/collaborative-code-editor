@@ -86,3 +86,7 @@
     background: transparent;
     border: 1px solid #B2DAFE;
 }
+
+.active-projects-li:hover {
+    cursor: pointer;
+}

@@ -7,7 +7,7 @@ const Login = () => {
             <div className="login-header">
                 <div style={{display: "flex", alignItems: "center"}}>
                     <div className="icon-container">
-                        <img className="icon" src="logo.png" alt="icon" className="icon"/>
+                        <img className="icon" src="logo.png" alt="icon"/>
                     </div>
                     <a href="/home" className="siteName">CodeTogether</a>
                 </div>
