@@ -5,11 +5,39 @@ import './Project.css';
 const ListItem = ({ item, fetchChildFolders, onCreateFolder }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [subItems, setSubItems] = useState([]);
+    const [isMenuOpen, setMenuOpen] = useState(false);
     
 /*
     const [showContextMenu, setShowContextMenu] = useState(false);
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 */
+
+   /* const createFolder = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/folders/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ , password }),
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                console.log(response)
+                console.error('Signup failed');
+            }
+        } catch (error) {
+            console.error('Error during signup:', error);
+        }
+    };*/
+
+
+
+
     const toggleSublist = async () => {
         setIsOpen(!isOpen);
         if (!isOpen) {
@@ -35,19 +63,27 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder }) => {
 */
     return (
         <div>
-            <div className="main-list-item">
-                {(
-                    <button className="main-list-button" onClick={toggleSublist}>
-                        {isOpen ? '˅' : '>'}
-                    </button>
-                )}
+            <div className="main-list-item" style={{display:"flex", justifyContent:'space-between'}}>
                 <div className="main-list-item">
-                    <img src='/folder.png' alt={item.name}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
-                    <div className="main-list-text">{item.name}</div>
+                    {(
+                        <button className="main-list-button" onClick={toggleSublist}>
+                            {isOpen ? '˅' : '>'}
+                        </button>
+                    )}
+                    <div className="main-list-item">
+                        <img src='/folder.png' alt={item.name}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
+                        <div className="main-list-text">{item.name}</div>
+                    </div>
                 </div>
-                {item.isFolder || true && (
-                    <button className="create-folder-button" onClick={() => onCreateFolder(item.id, subItems.length)}>+</button>
-                )}
+                <div className="dropdown">
+                    <button className="create-folder-button">⋮</button>
+                    <div className="dropdown-content">
+                        {!item.isFile && (<a onClick={() => onCreateFolder(item.id, subItems.length)}>Add file</a>)}
+                        {!item.isFile && (<a onClick={() => onCreateFolder(item.id, subItems.length)}>Add folder</a>)}
+                        <a onClick={() => onCreateFolder(item.id, subItems.length)}>Delete</a>
+                    </div>
+                </div>
+
             </div>
             {isOpen && subItems && (
                 <ul style={{listStyleType: "none", margin:"0"}}>

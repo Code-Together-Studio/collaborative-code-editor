@@ -91,6 +91,13 @@
     border: transparent;
 }
 
+.create-folder-button {
+    color: #B2DAFE;
+    background-color: transparent;
+    border: transparent;
+    font: 1rem 'Fira Code';
+}
+
 .main-list-text {
     color: #B2DAFE;
     align-content: center;
@@ -127,19 +134,50 @@
   color: white;
 }
 
-.create-folder-button {
-  margin: 10px 15px;
-  padding: 0 4px;
-  border: 1px solid #B2DAFE;
-  cursor: pointer;
-  color: #B2DAFE;
-  background-color: transparent;
-  font: 0.7rem 'Fira Code';
-  max-height: 20px;
-}
 
 .create-folder-button:hover {
   border: 1px solid #82C4FF;
   color: #82C4FF;
 }
 
+.dropdown {
+    background: transparent;
+    border: transparent;
+    color: #B2DAFE;
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    color: #B2DAFE;  background: transparent;
+    border: transparent;
+
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
