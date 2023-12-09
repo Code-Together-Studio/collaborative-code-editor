@@ -12,7 +12,7 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     @Query(value = """
                     SELECT *
                     FROM projects
-                    WHERE authenticated_only = 0
+                    WHERE authenticated_only = false
             """, nativeQuery = true)
     List<Project> getNotRequiredAuthenticationProjects();
 

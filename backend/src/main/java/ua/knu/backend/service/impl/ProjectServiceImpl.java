@@ -51,7 +51,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void deleteProject(Integer id) {
-        folderService.deleteFolder(getProjectById(id).getHiddenRootFolderId());
+        Integer rootFolderId = getProjectById(id).getHiddenRootFolderId();
+        if (rootFolderId != null)
+            folderService.deleteFolder(rootFolderId);
         projectRepository.deleteById(id);
     }
 
