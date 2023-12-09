@@ -58,6 +58,7 @@ public class FolderServiceImpl implements FolderService {
         codeSnippetRepository.deleteAllByFolderId(id);
         Hibernate.initialize(currentFolder);
         currentFolder.getChildrenFolders().stream().map(Folder::getId).forEach(this::deleteFolder);
+        folderRepository.deleteById(currentFolder.getId());
         return currentFolder;
     }
 
