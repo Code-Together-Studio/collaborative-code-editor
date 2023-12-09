@@ -3,8 +3,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: compose-postgres
     password: compose-postgres
-redis:
-  port: 6379
-  host: localhost
+  data:
+    redis:
+      port: 6379
+      database: 0
+      host: localhost
+      timeout: 600000
+      password: mypass
 server:
   port: 8081

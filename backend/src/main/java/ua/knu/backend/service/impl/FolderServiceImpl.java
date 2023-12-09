@@ -41,7 +41,15 @@ public class FolderServiceImpl implements FolderService {
         throwExceptionIfParentFolderContainsFolderWithName(parentFolder, name);
         Folder createdFolder = new Folder(name, parentFolder);
         parentFolder.addChild(createdFolder);
+        folderRepository.save(parentFolder);
         return folderRepository.save(createdFolder);
+    }
+
+    @Override
+    public Folder createRootFolder(String project_title) {
+        Folder folder = new Folder();
+        folder.setName("rootFolderOf{"+project_title+"}");
+        return folderRepository.save(folder);
     }
 
     @Override
@@ -50,6 +58,7 @@ public class FolderServiceImpl implements FolderService {
         codeSnippetRepository.deleteAllByFolderId(id);
         Hibernate.initialize(currentFolder);
         currentFolder.getChildrenFolders().stream().map(Folder::getId).forEach(this::deleteFolder);
+        folderRepository.deleteById(currentFolder.getId());
         return currentFolder;
     }
 
