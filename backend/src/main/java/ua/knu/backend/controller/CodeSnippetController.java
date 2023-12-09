@@ -1,16 +1,13 @@
 package ua.knu.backend.controller;
 
 import org.springframework.web.bind.annotation.*;
-import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.service.CodeSnippetService;
 import ua.knu.backend.web.dto.CodeSnippetDto;
 import ua.knu.backend.web.dto.ContentDto;
 import ua.knu.backend.web.mapper.CodeSnippetMapper;
-import ua.knu.backend.web.mapper.ProjectMapper;
 
 import java.util.List;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
