@@ -5,8 +5,7 @@ import './Project.css';
 const ListItem = ({ item, fetchChildFolders, onCreateFolder }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [subItems, setSubItems] = useState([]);
-    const [isMenuOpen, setMenuOpen] = useState(false);
-    
+
 /*
     const [showContextMenu, setShowContextMenu] = useState(false);
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
@@ -243,7 +242,16 @@ const Project = () => {
             </div>
             <div className="main-content">
                 <div className="main-left-block">
-                    <h1 className="siteName">{project ? project.title : 'Project'}</h1>
+                    <div style={{display:"flex", justifyContent:"space-between"}}>
+                        <h1 className="siteName">{project ? project.title : 'Project'}</h1>
+                        <div className="dropdown">
+                            <button className="create-folder-button">⋮</button>
+                            <div className="dropdown-content">
+                               <a onClick={() => createFolder(null, "New folder")}>Add file</a>
+                                <a onClick={() => createFolder(null, "New folder")}>Add folder</a>
+                            </div>
+                        </div>
+                    </div>
                     {rootFolders.map((item, index) => (
                         <ListItem key={index} item={item} fetchChildFolders={fetchChildFolders} onCreateFolder={createFolder} />
                     ))}

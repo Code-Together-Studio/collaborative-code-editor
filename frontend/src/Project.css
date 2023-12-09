@@ -96,6 +96,8 @@
     background-color: transparent;
     border: transparent;
     font: 1rem 'Fira Code';
+    width: 100%;
+    height: 100%;
 }
 
 .main-list-text {
@@ -144,7 +146,6 @@
     background: transparent;
     border: transparent;
     color: #B2DAFE;
-    position: relative;
     display: inline-block;
 }
 
