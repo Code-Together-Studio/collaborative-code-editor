@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import './Project.css';
 
-const ListItem = ({ item, fetchChildFolders, onCreateFolder }) => {
+const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [subItems, setSubItems] = useState([]);
 
@@ -41,7 +41,8 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder }) => {
         setIsOpen(!isOpen);
         if (!isOpen) {
             const childFolders = await fetchChildFolders(item.id);
-            setSubItems(childFolders);
+            const childFiles = await fetchChildFiles(item.id);
+            setSubItems(childFolders.concat(childFiles));
             // const folderFiles = await fetchFiles(item.id);
             // setFiles(folderFiles);
         }
@@ -64,13 +65,18 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder }) => {
         <div>
             <div className="main-list-item" style={{display:"flex", justifyContent:'space-between'}}>
                 <div className="main-list-item">
-                    {(
+                    {item.content == null && (
                         <button className="main-list-button" onClick={toggleSublist}>
                             {isOpen ? '˅' : '>'}
                         </button>
                     )}
                     <div className="main-list-item">
-                        <img src='/folder.png' alt={item.name}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
+                        {item.content == null && (
+                         <img src='/folder.png' alt={item.name}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
+                        )}
+                        {item.content != null && (
+                            <img src='/file.png' alt={item.name}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
+                        )}
                         <div className="main-list-text">{item.name}</div>
                     </div>
                 </div>
@@ -88,7 +94,10 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder }) => {
                 <ul style={{listStyleType: "none", margin:"0"}}>
                     {subItems.map((subItem, index) => (
                         <li key={index}>
-                            <ListItem item={subItem} fetchChildFolders={fetchChildFolders} onCreateFolder={onCreateFolder} />
+                            <ListItem item={subItem}
+                                      fetchChildFolders={fetchChildFolders}
+                                      onCreateFolder={onCreateFolder}
+                                      fetchChildFiles={fetchChildFiles} />
                         </li>
                     ))}
                 </ul>
@@ -157,8 +166,21 @@ const Project = () => {
             return [];
         }
     };
+
+    const fetchChildFiles = async (folderId) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/folder/${folderId}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.log('Error fetching child folders:', error);
+            return [];
+        }
+    };
     
-    useEffect(() => {
+    useState(() => {
         const fetchRootFolders = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${projectId}/project-root-folders`);
@@ -253,7 +275,10 @@ const Project = () => {
                         </div>
                     </div>
                     {rootFolders.map((item, index) => (
-                        <ListItem key={index} item={item} fetchChildFolders={fetchChildFolders} onCreateFolder={createFolder} />
+                        <ListItem key={index} item={item}
+                                  fetchChildFolders={fetchChildFolders}
+                                  onCreateFolder={createFolder}
+                                  fetchChildFiles={fetchChildFiles} />
                     ))}
                 </div>
                 <div className="main-right-block">
