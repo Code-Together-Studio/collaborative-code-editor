@@ -10,6 +10,8 @@ public interface FolderService {
 
     Folder createFolder(Integer parentFolderId, String name);
 
+    Folder createRootFolder(String project_title);
+
     Folder deleteFolder(Integer id);
 
     List<Folder> getProjectRootFolders(Integer projectId);

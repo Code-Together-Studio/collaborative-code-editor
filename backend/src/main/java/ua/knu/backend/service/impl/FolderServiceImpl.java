@@ -41,7 +41,15 @@ public class FolderServiceImpl implements FolderService {
         throwExceptionIfParentFolderContainsFolderWithName(parentFolder, name);
         Folder createdFolder = new Folder(name, parentFolder);
         parentFolder.addChild(createdFolder);
-        return createdFolder;
+        folderRepository.save(parentFolder);
+        return folderRepository.save(createdFolder);
+    }
+
+    @Override
+    public Folder createRootFolder(String project_title) {
+        Folder folder = new Folder();
+        folder.setName("rootFolderOf{"+project_title+"}");
+        return folderRepository.save(folder);
     }
 
     @Override
