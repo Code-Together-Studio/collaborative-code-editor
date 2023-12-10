@@ -12,4 +12,5 @@ public class ProjectDto {
     private String title;
     private Integer rootFolderId;
     private LocalDateTime createdAt;
+    private boolean authenticatedOnly;
 }
