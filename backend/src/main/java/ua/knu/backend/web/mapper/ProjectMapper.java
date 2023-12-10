@@ -13,7 +13,8 @@ public class ProjectMapper {
                 project.getTitle(),
                 project.getHiddenRootFolderId(),
                 project.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
-                        .toLocalDateTime()
+                        .toLocalDateTime(),
+                project.isAuthenticatedOnly()
         );
     }
 }
