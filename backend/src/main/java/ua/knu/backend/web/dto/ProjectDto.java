@@ -10,5 +10,6 @@ import java.time.LocalDateTime;
 public class ProjectDto {
     private Integer id;
     private String title;
+    private Integer rootFolderId;
     private LocalDateTime createdAt;
 }

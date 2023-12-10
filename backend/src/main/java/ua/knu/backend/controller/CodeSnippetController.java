@@ -1,13 +1,14 @@
 package ua.knu.backend.controller;
 
 import org.springframework.web.bind.annotation.*;
-import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.service.CodeSnippetService;
 import ua.knu.backend.web.dto.CodeSnippetDto;
+import ua.knu.backend.web.dto.ContentDto;
 import ua.knu.backend.web.mapper.CodeSnippetMapper;
-import ua.knu.backend.web.mapper.ProjectMapper;
 
 import java.util.List;
+
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/code-snippet")
@@ -29,19 +30,24 @@ public class CodeSnippetController {
         return CodeSnippetMapper.toDto(codeSnippetService.getCodeSnippetById(id));
     }
 
-    @GetMapping("/folder/{folderId}")
-    public List<CodeSnippetDto> getCodeSnippedByFolderId(@PathVariable("folderId") Integer folderId){
-        return codeSnippetService.getCodeSnippetsByFolderId(folderId).stream().map(CodeSnippetMapper::toDto).toList();
+    @GetMapping("/folder/{id}")
+    public List<CodeSnippetDto> getAllCodeSnippedsFromFolder(@PathVariable("id") Integer folderId){
+        return codeSnippetService.getAllCodeSnippedsFromFolder(folderId).stream().map(CodeSnippetMapper::toDto).collect(Collectors.toList());
     }
 
     @PostMapping("/{id}/content")
-    public void updateContentById(@PathVariable("id") Integer id, @RequestBody String content){
-        codeSnippetService.updateContentById(id, content);
+    public void updateContentById(@PathVariable("id") Integer id, @RequestBody ContentDto contentDto){
+         codeSnippetService.updateContentById(id, contentDto.getContent());
     }
 
     @PostMapping("/{id}")
-    public void saveInDb(@PathVariable("id") Integer id, @RequestBody CodeSnippetDto codeSnippetDto){
-        codeSnippetService.saveInDb(CodeSnippetMapper.toEntity(codeSnippetDto));
+    public void saveInDb(@PathVariable("id") Integer id, @RequestBody String content){
+        codeSnippetService.saveInDb(id, content);
+    }
+
+    @PostMapping
+    public CodeSnippetDto create(@RequestParam Integer parentFolderId, @RequestParam String name){
+        return CodeSnippetMapper.toDto(codeSnippetService.create(parentFolderId, name));
     }
 
     @DeleteMapping("/{id}")

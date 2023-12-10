@@ -11,6 +11,7 @@ public class ProjectMapper {
         return new ProjectDto(
                 project.getId(),
                 project.getTitle(),
+                project.getHiddenRootFolderId(),
                 project.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
                         .toLocalDateTime()
         );

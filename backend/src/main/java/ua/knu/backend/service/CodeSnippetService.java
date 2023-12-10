@@ -9,11 +9,14 @@ public interface CodeSnippetService {
     String getContentById(Integer id);
 
     CodeSnippet getCodeSnippetById(Integer id);
-    List<CodeSnippet> getCodeSnippetsByFolderId(Integer folderId);
 
     void updateContentById(Integer id, String content);
 
-    void saveInDb(CodeSnippet codeSnippet);
+    void saveInDb( Integer id, String content);
 
     void deleteById(Integer id);
+
+    CodeSnippet create(Integer parentFolderId, String name);
+
+    List<CodeSnippet> getAllCodeSnippedsFromFolder(Integer folderId);
 }

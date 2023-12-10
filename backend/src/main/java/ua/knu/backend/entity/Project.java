@@ -28,13 +28,10 @@ public class Project {
     @Column(name = "authenticated_only")
     private boolean authenticatedOnly;
 
-    public Project(String title) {
-        this(title, false);
-    }
-
-    public Project(String title, boolean authenticatedOnly) {
+    public Project(String title, boolean authenticatedOnly, Integer hiddenRootFolderId) {
         this.title = title;
         this.authenticatedOnly = authenticatedOnly;
+        this.hiddenRootFolderId = hiddenRootFolderId;
         this.createdAt = new Date();
     }
 

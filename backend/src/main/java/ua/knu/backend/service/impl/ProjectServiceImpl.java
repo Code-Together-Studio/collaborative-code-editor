@@ -1,10 +1,12 @@
 package ua.knu.backend.service.impl;
 
 import org.springframework.stereotype.Service;
+import ua.knu.backend.entity.Folder;
 import ua.knu.backend.entity.Project;
 import ua.knu.backend.exception.project.ProjectByIdNotFoundException;
 import ua.knu.backend.exception.project.ProjectByNameNotFoundException;
 import ua.knu.backend.exception.project.ProjectWithTitleExistsException;
+import ua.knu.backend.repository.FolderRepository;
 import ua.knu.backend.repository.ProjectRepository;
 import ua.knu.backend.service.FolderService;
 import ua.knu.backend.service.ProjectService;
@@ -46,12 +48,15 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Project createProject(String title, boolean authenticated_only) {
         throwExceptionIfProjectWithTitleMissing(title);
-        return projectRepository.save(new Project(title, authenticated_only));
+        Folder rootFolder = folderService.createRootFolder(title);
+        return projectRepository.save(new Project(title, authenticated_only, rootFolder.getId()));
     }
 
     @Override
     public void deleteProject(Integer id) {
-        folderService.deleteFolder(getProjectById(id).getHiddenRootFolderId());
+        Integer rootFolderId = getProjectById(id).getHiddenRootFolderId();
+        if (rootFolderId != null)
+            folderService.deleteFolder(rootFolderId);
         projectRepository.deleteById(id);
     }
 
