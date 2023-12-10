@@ -2,10 +2,13 @@ package ua.knu.backend.service.impl;
 
 import org.springframework.stereotype.Service;
 import ua.knu.backend.entity.CodeSnippet;
+import ua.knu.backend.entity.Project;
 import ua.knu.backend.repository.CodeSnippetCashableRepository;
 import ua.knu.backend.repository.CodeSnippetRepository;
 import ua.knu.backend.repository.FolderRepository;
+import ua.knu.backend.repository.ProjectRepository;
 import ua.knu.backend.service.CodeSnippetService;
+import ua.knu.backend.web.dto.CodeSnippetDto;
 
 import java.util.Date;
 import java.util.List;
@@ -17,9 +20,12 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
 
     private final CodeSnippetCashableRepository codeSnippetCashableRepository;
 
-    public CodeSnippetServiceImpl(CodeSnippetRepository codeSnippetRepository, FolderRepository folderRepository, CodeSnippetCashableRepository codeSnippetCashableRepository) {
+    private final ProjectRepository projectRepository;
+
+    public CodeSnippetServiceImpl(CodeSnippetRepository codeSnippetRepository, FolderRepository folderRepository, CodeSnippetCashableRepository codeSnippetCashableRepository, ProjectRepository projectRepository) {
         this.codeSnippetRepository = codeSnippetRepository;
         this.codeSnippetCashableRepository = codeSnippetCashableRepository;
+        this.projectRepository = projectRepository;
     }
 
     @Override
@@ -38,6 +44,13 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     }
 
     @Override
+    public List<CodeSnippet> getAllRootCodeSnippedsFromProject(Integer projectId) {
+        Project project = projectRepository.getById(projectId);
+        Integer folderId = project.getHiddenRootFolderId();
+        return codeSnippetRepository.getAllByFolderId(folderId);
+    }
+
+    @Override
     public void updateContentById(Integer id, String content) {
         codeSnippetCashableRepository.updateContentById(id, content);
     }
@@ -50,12 +63,18 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     }
 
     @Override
-    public CodeSnippet create(Integer parentFolderId, String name) {
+    public CodeSnippet createInFolder(Integer parentFolderId, String name) {
         CodeSnippet codeSnippet = new CodeSnippet(name, parentFolderId);
         codeSnippet.setCreatedAt(new Date());
         codeSnippet.setModifiedAt(new Date());
         codeSnippet.setContent("");
         return codeSnippetRepository.save(codeSnippet);
+    }
+
+    @Override
+    public CodeSnippet createInProject(Integer parentProjectId, String name) {
+        Project project = projectRepository.getById(parentProjectId);
+        return createInFolder(project.getHiddenRootFolderId(), name);
     }
 
     @Override
