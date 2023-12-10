@@ -106,50 +106,10 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles }) 
     );
 };
 
-const data = [
-    {
-        imageSrc: '/file.png',
-        text: 'File 1',
-    },
-    {
-        imageSrc: '/folder.png',
-        text: 'Folder 1',
-        sublist: [
-            {
-                imageSrc: '/file.png',
-                text: 'File 1.1',
-            },
-            {
-                imageSrc: '/file.png',
-                text: 'File 1.2',
-            },
-        ],
-    },
-    {
-        imageSrc: '/folder.png',
-        text: 'Folder 2',
-        sublist: [
-            {
-                imageSrc: '/folder.png',
-                text: 'Folder 2.1',
-                sublist: [
-                    {
-                        imageSrc: '/file.png',
-                        text: 'File 2.1.1',
-                    },
-                ],
-            },
-            {
-                imageSrc: '/file.png',
-                text: 'File 2.1',
-            },
-        ],
-    },
-];
-
 const Project = () => {
     const { projectId } = useParams();
     const [rootFolders, setRootFolders] = useState([]);
+    const [rootFiles, setRootFiles] = useState([]);
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const jwtToken = localStorage.getItem('jwtToken');
@@ -199,6 +159,25 @@ const Project = () => {
         fetchRootFolders();
     }, [projectId]);
 
+    useState(() => {
+        const fetchRootFiles = async (projectId) => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/project/${projectId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const files = await response.json();
+                setRootFiles(files);
+            } catch (error) {
+                console.log('Error fetching project root files:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRootFiles();
+    }, [projectId]);
+
     useEffect(() => {
         const fetchProject = async () => {
             try {
@@ -222,11 +201,11 @@ const Project = () => {
         return <div>Loading...</div>;
     }
 
-    const createFolder = async (parentId, length) => {
+    const createFolder = async (parentId, name) => {
         try {
             const formData = new FormData();
             formData.append('parentFolderId', parentId);
-            formData.append('name', 'New folder ' + `${length + 1}`);
+            formData.append('name', name);
 
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/create`, {
                 method: 'POST',
@@ -242,6 +221,27 @@ const Project = () => {
             console.error('Error creating folder:', error);
         }
     };
+
+    /*const createFile = async (parentId, name) => {
+        try {
+            const formData = new FormData();
+            formData.append('parentFolderId', parentId);
+            formData.append('name', name);
+
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/${parentIdId}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                console.log('Folder created successfully');
+            } else {
+                console.error('Failed to create folder');
+            }
+        } catch (error) {
+            console.error('Error creating folder:', error);
+        }
+    };*/
 
     return (
         <div className="app">
@@ -269,8 +269,30 @@ const Project = () => {
                         <div className="dropdown">
                             <button className="create-folder-button">⋮</button>
                             <div className="dropdown-content">
-                               <a onClick={() => createFolder(null, "New folder")}>Add file</a>
-                                <a onClick={() => createFolder(null, "New folder")}>Add folder</a>
+                                <a class="create-file">
+                                    Add file
+                                    <div className="dropdown-file-form">
+                                        <form className="file-form" onSubmit={(e) => e.preventDefault()}>
+                                            <label htmlFor="name">Enter file name:</label>
+                                            <input type="text" id="name" name="name" />
+                                            <button onClick={() => createFolder(document.getElementById('name').value)}>
+                                                Submit
+                                            </button>
+                                        </form>
+                                    </div>
+                                </a>
+                                <a class="create-file">
+                                    Add folder
+                                    <div className="dropdown-file-form">
+                                        <form className="file-form" onSubmit={(e) => e.preventDefault()}>
+                                            <label htmlFor="name">Enter folder name:</label>
+                                            <input type="text" id="name" name="name" />
+                                            <button onClick={() => createFolder(document.getElementById('name').value)}>
+                                                Submit
+                                            </button>
+                                        </form>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -280,6 +302,7 @@ const Project = () => {
                                   onCreateFolder={createFolder}
                                   fetchChildFiles={fetchChildFiles} />
                     ))}
+
                 </div>
                 <div className="main-right-block">
                     <textarea className="main-textarea"></textarea>
