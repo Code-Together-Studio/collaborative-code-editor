@@ -16,7 +16,11 @@ public interface CodeSnippetService {
 
     void deleteById(Integer id);
 
-    CodeSnippet create(Integer parentFolderId, String name);
+    CodeSnippet createInFolder(Integer parentFolderId, String name);
 
     List<CodeSnippet> getAllCodeSnippedsFromFolder(Integer folderId);
+
+    List<CodeSnippet> getAllRootCodeSnippedsFromProject(Integer projectId);
+
+    CodeSnippet createInProject(Integer parentProjectId, String name);
 }
