@@ -27,6 +27,11 @@ public class FolderController {
         return FolderMapper.toDto(folderService.createFolder(parentFolderId, name));
     }
 
+    @PostMapping("/project/create")
+    public FolderDto createFolderInProject(@RequestParam Integer parentProjectId, @RequestParam String name) {
+        return FolderMapper.toDto(folderService.createFolderInProject(parentProjectId, name));
+    }
+
     @DeleteMapping("/{id}")
     public FolderDto deleteFolder(@PathVariable Integer id) {
         return FolderMapper.toDto(folderService.deleteFolder(id));
