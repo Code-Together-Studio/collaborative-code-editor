@@ -47,7 +47,14 @@ const Project = () => {
                     throw new Error('Network response was not ok');
                 }
                 const folders = await response.json();
-                setRootFolders(folders);
+                setRootFolders(folders.sort(
+                    function(a,b){
+                        let x = a.name.toLowerCase();
+                        let y = b.name.toLowerCase();
+
+                        if(x>y){return 1;}
+                        if(x<y){return -1;}
+                        return 0;}));
             } catch (error) {
                 console.log('Error fetching project root folders:', error);
             } finally {
@@ -66,7 +73,14 @@ const Project = () => {
                     throw new Error('Network response was not ok');
                 }
                 const files = await response.json();
-                setRootFiles(files);
+                setRootFiles(files.sort(
+                    function(a,b){
+                        let x = a.name.toLowerCase();
+                        let y = b.name.toLowerCase();
+
+                        if(x>y){return 1;}
+                        if(x<y){return -1;}
+                        return 0;}));
             } catch (error) {
                 console.log('Error fetching project root files:', error);
             } finally {
@@ -159,10 +173,12 @@ const Project = () => {
                 body: formData
             });
             if (response.ok) {
-                response.json().then((date)=>{
-                    setRootFiles((prev)=>[...prev, date])
-                })
+                /*response.json().then((data)=>{
+                    setRootFiles((prev)=>[...prev, data])
+                })*/
+                const date = await response.json()
                 console.log('File created successfully');
+                return(date);
             } else {
                 console.error('Failed to create file');
             }
@@ -253,7 +269,17 @@ const Project = () => {
                                         <form className="file-form" onSubmit={(e) => e.preventDefault()}>
                                             <label htmlFor="name">Enter file name:</label>
                                             <input type="text" ref={inputFileNameRef} id="name" name="name" />
-                                            <button onClick={() => createFileInProject(inputFileNameRef.current.value)}>
+                                            <button onClick={() => createFileInProject(inputFileNameRef.current.value).then((data) => {
+                                                setRootFiles(prev => [...rootFiles, data].sort(
+                                                    function(a,b){
+                                                        let x = a.name.toLowerCase();
+                                                        let y = b.name.toLowerCase();
+
+                                                        if(x>y){return 1;}
+                                                        if(x<y){return -1;}
+                                                        return 0;}));
+                                                inputFileNameRef.current.value = "";
+                                            })}>
                                                 Submit
                                             </button>
                                         </form>
@@ -271,10 +297,9 @@ const Project = () => {
                                                         let x = a.name.toLowerCase();
                                                         let y = b.name.toLowerCase();
 
-                                                        if(x>y){return -1;}
-                                                        if(x<y){return 1;}
-                                                        return 0;})
-                                                    .sort((a) =>  a.content !== undefined ? 1 : -1));
+                                                        if(x>y){return 1;}
+                                                        if(x<y){return -1;}
+                                                        return 0;}));
                                                 inputFolderNameRef.current.value = "";
                                             })}>
                                                 Submit
@@ -294,14 +319,6 @@ const Project = () => {
                                   deleteFile={deleteFile}
                         />
                     ))}
-                    {/*{rootFiles.map((item, index) => (
-                        <ListItem key={index} item={item}
-                        fetchChildFolders={fetchChildFolders}
-                        onCreateFolder={createFolder}
-                        fetchChildFiles={fetchChildFiles}
-                        onCreateFile={createFileInFolder}
-                        />
-                    ))}*/}
                     {rootFilesView}
                 </div>
                 <div className="main-right-block">

@@ -42,9 +42,23 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
         if (!isOpen) {
             const childFolders = await fetchChildFolders(item.id);
             const childFiles = await fetchChildFiles(item.id);
+            childFiles.sort(
+                function(a,b){
+                    let x = a.name.toLowerCase();
+                    let y = b.name.toLowerCase();
+
+                    if(x>y){return 1;}
+                    if(x<y){return -1;}
+                    return 0;});
+            childFolders.sort(
+                function(a,b){
+                    let x = a.name.toLowerCase();
+                    let y = b.name.toLowerCase();
+
+                    if(x>y){return 1;}
+                    if(x<y){return -1;}
+                    return 0;});
             setSubItems(childFolders.concat(childFiles));
-            // const folderFiles = await fetchFiles(item.id);
-            // setFiles(folderFiles);
         }
     };
 
@@ -83,7 +97,7 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                 <div className="dropdown">
                     <button className="create-folder-button">⋮</button>
                     <div className="dropdown-content">
-                        {!item.isFile && (<a className="create-file">
+                        {item.content == null && (<a className="create-file">
                             Add file
                             <div className="dropdown-file-form">
                                 <form className="file-form" onSubmit={(e) => e.preventDefault()}>
@@ -91,15 +105,23 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                     <input type="text" ref={inputFileRef} id="fileName" name="fileName"/>
                                     <button onClick={() => {
                                         onCreateFile(item.id, inputFileRef.current.value).then((data) => {
-                                            setSubItems(subItems.concat(data))});
+                                            setSubItems(prev => [...subItems, data].sort(
+                                                function(a,b){
+                                                    let x = a.name.toLowerCase();
+                                                    let y = b.name.toLowerCase();
+
+                                                    if(x>y){return 1;}
+                                                    if(x<y){return -1;}
+                                                    return 0;})
+                                                .sort((a) =>  a.content !== undefined ? 1 : -1));
                                             inputFileRef.current.value = "";
-                                    }} >
+                                    })}} >
                                         Submit
                                     </button>
                                 </form>
                             </div>
                         </a>)}
-                        {!item.isFile && (<a className="create-file">
+                        {item.content == null && (<a className="create-file">
                             Add folder
                             <div className="dropdown-file-form">
                                 <form className="file-form" onSubmit={(e) => e.preventDefault()}>
@@ -107,7 +129,6 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                     <input type="text" ref={inputFolderRef} id="folderName" name="folderName"/>
                                     <button onClick={() => {
                                         onCreateFolder(item.id, inputFolderRef.current.value).then((data) => {
-                                            console.log(data);
                                             setSubItems(prev => [...subItems, data].sort(
                                                 function(a,b){
                                                 let x = a.name.toLowerCase();
@@ -126,7 +147,7 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                 </form>
                             </div>
                         </a>)}
-                        {item.isFile && (<a onClick={() => deleteFile(item.id)}>Delete</a>)}
+                        <a onClick={() => deleteFile(item.id)}>Delete</a>
                     </div>
                 </div>
 
