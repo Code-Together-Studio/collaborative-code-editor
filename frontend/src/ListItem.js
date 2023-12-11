@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 
-const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, onCreateFile, deleteFile }) => {
+const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, onCreateFile, deleteFile, deleteFolder }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [subItems, setSubItems] = useState([]);
     const inputFileRef = useRef(null);
@@ -47,16 +47,16 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                     let x = a.name.toLowerCase();
                     let y = b.name.toLowerCase();
 
-                    if(x>y){return 1;}
-                    if(x<y){return -1;}
+                    if(x > y){return 1;}
+                    if(x < y){return -1;}
                     return 0;});
             childFolders.sort(
                 function(a,b){
                     let x = a.name.toLowerCase();
                     let y = b.name.toLowerCase();
 
-                    if(x>y){return 1;}
-                    if(x<y){return -1;}
+                    if(x > y){return 1;}
+                    if(x < y){return -1;}
                     return 0;});
             setSubItems(childFolders.concat(childFiles));
         }
@@ -105,13 +105,13 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                     <input type="text" ref={inputFileRef} id="fileName" name="fileName"/>
                                     <button onClick={() => {
                                         onCreateFile(item.id, inputFileRef.current.value).then((data) => {
-                                            setSubItems(prev => [...subItems, data].sort(
+                                            setSubItems(() => [...subItems, data].sort(
                                                 function(a,b){
                                                     let x = a.name.toLowerCase();
                                                     let y = b.name.toLowerCase();
 
-                                                    if(x>y){return 1;}
-                                                    if(x<y){return -1;}
+                                                    if(x > y){return 1;}
+                                                    if(x < y){return -1;}
                                                     return 0;})
                                                 .sort((a) =>  a.content !== undefined ? 1 : -1));
                                             inputFileRef.current.value = "";
@@ -147,7 +147,14 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                 </form>
                             </div>
                         </a>)}
-                        <a onClick={() => deleteFile(item.id)}>Delete</a>
+                        {item.content == null && (
+                            <a onClick={() => deleteFolder(item.id)}>Delete</a>
+                        )}
+                        {item.content != null && (
+                            <a onClick={() => {deleteFile(item.id).then((data) => {
+                                setSubItems(prev => prev.filter(obj => obj.id !== item.id))
+                            }).catch(error => console.log(error))}}>Delete</a>
+                        )}
                     </div>
                 </div>
 
@@ -161,7 +168,8 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                       onCreateFolder={onCreateFolder}
                                       fetchChildFiles={fetchChildFiles}
                                       onCreateFile={onCreateFile}
-                                      deleteFile={deleteFile} />
+                                      deleteFile={deleteFile}
+                                      deleteFolder={deleteFolder}/>
                         </li>
                     ))}
                 </ul>

@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/folders")
+@CrossOrigin
 public class FolderController {
 
     private final FolderService folderService;

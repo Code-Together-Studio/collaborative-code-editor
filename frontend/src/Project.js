@@ -198,9 +198,9 @@ const Project = () => {
                 body: formData
             });
             if (response.ok) {
-                const date = await response.json()
+                const data = await response.json()
                 console.log('File created successfully');
-                return(date);
+                return(data);
             } else {
                 console.error('Failed to create file');
             }
@@ -227,6 +227,24 @@ const Project = () => {
         }
     };
 
+    const deleteFolder = async (id) => {
+        try {
+            const formData = new FormData();
+            formData.append('id', id);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${id}`, {
+                method: 'DELETE',
+                body: formData
+            });
+            if (response.ok) {
+                console.log('Folder deleted successfully');
+            } else {
+                console.error('Failed to delete folder');
+            }
+        } catch (error) {
+            console.error('Error whilst deleting folder:', error);
+        }
+    };
+
     const rootFilesView = useMemo(() => rootFiles.map((item, index) => (
         <ListItem key={index} item={item}
                   fetchChildFolders={fetchChildFolders}
@@ -234,6 +252,7 @@ const Project = () => {
                   fetchChildFiles={fetchChildFiles}
                   onCreateFile={createFileInFolder}
                   deleteFile={deleteFile}
+                  deleteFolder={deleteFolder}
         />
     )), [rootFiles]);
 
@@ -275,8 +294,8 @@ const Project = () => {
                                                         let x = a.name.toLowerCase();
                                                         let y = b.name.toLowerCase();
 
-                                                        if(x>y){return 1;}
-                                                        if(x<y){return -1;}
+                                                        if(x > y){return 1;}
+                                                        if(x < y){return -1;}
                                                         return 0;}));
                                                 inputFileNameRef.current.value = "";
                                             })}>
@@ -297,8 +316,8 @@ const Project = () => {
                                                         let x = a.name.toLowerCase();
                                                         let y = b.name.toLowerCase();
 
-                                                        if(x>y){return 1;}
-                                                        if(x<y){return -1;}
+                                                        if(x > y){return 1;}
+                                                        if(x < y){return -1;}
                                                         return 0;}));
                                                 inputFolderNameRef.current.value = "";
                                             })}>
@@ -317,6 +336,7 @@ const Project = () => {
                                   fetchChildFiles={fetchChildFiles}
                                   onCreateFile={createFileInFolder}
                                   deleteFile={deleteFile}
+                                  deleteFolder={deleteFolder}
                         />
                     ))}
                     {rootFilesView}
