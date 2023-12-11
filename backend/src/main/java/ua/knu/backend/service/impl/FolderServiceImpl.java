@@ -55,7 +55,7 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public Folder createFolderInProject(Integer parentProjectId, String name) {
         Project project = projectRepository.getOne(parentProjectId);
-        return createFolder(project.getId(), name);
+        return createFolder(project.getHiddenRootFolderId(), name);
     }
 
     @Override
