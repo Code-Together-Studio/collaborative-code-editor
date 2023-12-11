@@ -53,6 +53,12 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
+    public Folder createFolderInProject(Integer parentProjectId, String name) {
+        Project project = projectRepository.getOne(parentProjectId);
+        return createFolder(project.getId(), name);
+    }
+
+    @Override
     public Folder deleteFolder(Integer id) {
         Folder currentFolder = getFolderById(id);
         codeSnippetRepository.deleteAllByFolderId(id);

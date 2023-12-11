@@ -19,4 +19,6 @@ public interface FolderService {
     List<Folder> getProjectRootFolders(String projectTitle);
 
     List<Folder> getChildFolders(Integer parentFolderId);
+
+    Folder createFolderInProject(Integer parentProjectId, String name);
 }
