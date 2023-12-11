@@ -96,6 +96,8 @@
     background-color: transparent;
     border: transparent;
     font: 1rem 'Fira Code';
+    width: 100%;
+    height: 100%;
 }
 
 .main-list-text {
@@ -144,7 +146,6 @@
     background: transparent;
     border: transparent;
     color: #B2DAFE;
-    position: relative;
     display: inline-block;
 }
 
@@ -161,7 +162,7 @@
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: #21262D;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
@@ -172,12 +173,78 @@
     padding: 12px 16px;
     text-decoration: none;
     display: block;
+    color: #82C4FF;
 }
 
 .dropdown-content a:hover {
-    background-color: #f1f1f1;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
 
 .dropdown:hover .dropdown-content {
     display: block;
+}
+
+.create-file{
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-file-form {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background-color: #21262D;
+    color: #82C4FF;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    width: 250px;
+}
+
+.create-file:hover .dropdown-file-form{
+    display: block;
+}
+
+.file-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.create-file label{
+    width: 100%;
+    margin: 0;
+    text-align: center;
+}
+
+.create-file input{
+    border-radius: 10px;
+    width: 100%;
+    margin: 3px auto;
+    border: 1px solid #B2DAFE;
+    color: #B2DAFE;
+    background-color: transparent;
+    text-align: center;
+    font: 1rem 'Fira Code';
+}
+
+.create-file button {
+    /*background-color: #B2DAFE;
+    color:  #82C4FF;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;*/
+    border-radius: 10px;
+    width: 150px;
+    border: 1px solid #B2DAFE;
+    cursor: pointer;
+    color: #1C3F69;
+    background-color: #B2DAFE;
+    font: 1rem 'Fira Code';
 }
