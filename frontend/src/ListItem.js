@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 
-const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, onCreateFile, deleteFile, deleteFolder }) => {
+const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, onCreateFile, deleteFile, deleteFolder, setContent }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [subItems, setSubItems] = useState([]);
     const inputFileRef = useRef(null);
@@ -77,7 +77,11 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
     */
     return (
         <div>
-            <div className="main-list-item" style={{display:"flex", justifyContent:'space-between'}}>
+            <div className="main-list-item" style={{display:"flex", justifyContent:'space-between'}} onClick={() => {
+                {item.content !== undefined && (
+                    setContent.current.value = item.content
+                )}
+            }}>
                 <div className="main-list-item">
                     {item.content == null && (
                         <button className="main-list-button" onClick={toggleSublist}>
@@ -169,7 +173,9 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                       fetchChildFiles={fetchChildFiles}
                                       onCreateFile={onCreateFile}
                                       deleteFile={deleteFile}
-                                      deleteFolder={deleteFolder}/>
+                                      deleteFolder={deleteFolder}
+                                      setContent={setContent}
+                            />
                         </li>
                     ))}
                 </ul>

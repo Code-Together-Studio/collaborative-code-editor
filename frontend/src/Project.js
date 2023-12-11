@@ -12,6 +12,8 @@ const Project = () => {
     const inputFileNameRef = useRef(null);
     const inputFolderNameRef = useRef(null);
     const jwtToken = localStorage.getItem('jwtToken');
+    const setContent = useRef("");
+    const [isClicked, setIsClicked] = useState(false);
 
     const fetchChildFolders = async (folderId) => {
         try {
@@ -253,15 +255,21 @@ const Project = () => {
                   onCreateFile={createFileInFolder}
                   deleteFile={deleteFile}
                   deleteFolder={deleteFolder}
+                  setContent={setContent}
         />
     )), [rootFiles]);
+
+    const handleChange = () => {
+        setIsClicked(!isClicked);
+    };
+    const leftBlockClassName = isClicked ? "main-left-block" : "main-left-block-absent"
 
     return (
         <div className="app">
             <div className="header">
                 <div style={{display: "flex", alignItems: "center"}}>
                     <div className="icon-container">
-                        <img className="icon" style={{height: "35px", width:"auto"}} src="/menu.png" alt="icon"/>
+                        <img className="icon" style={{height: "35px", width:"auto"}} src="/menu.png" alt="icon" onClick={handleChange}/>
                         <img className="icon" src="/logo.png" alt="icon"/>
                     </div>
                     <a href="/home" className="siteName">CodeTogether</a>
@@ -276,7 +284,7 @@ const Project = () => {
                 </div>
             </div>
             <div className="main-content">
-                <div className="main-left-block">
+                <div className={leftBlockClassName}>
                     <div style={{display:"flex", justifyContent:"space-between"}}>
                         <h1 className="siteName">{project ? project.title : 'Project'}</h1>
                         <div className="dropdown">
@@ -337,12 +345,13 @@ const Project = () => {
                                   onCreateFile={createFileInFolder}
                                   deleteFile={deleteFile}
                                   deleteFolder={deleteFolder}
+                                  setContent={setContent}
                         />
                     ))}
                     {rootFilesView}
                 </div>
                 <div className="main-right-block">
-                    <textarea className="main-textarea"></textarea>
+                    <textarea className="main-textarea" ref={setContent}></textarea>
                 </div>
             </div>
         </div>
