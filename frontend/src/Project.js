@@ -1,110 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo, useRef} from 'react';
 import { useParams } from 'react-router-dom';
 import './Project.css';
-
-const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [subItems, setSubItems] = useState([]);
-
-/*
-    const [showContextMenu, setShowContextMenu] = useState(false);
-    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
-*/
-
-   /* const createFolder = async (e) => {
-        e.preventDefault();
-
-        try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/folders/create`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ , password }),
-            });
-
-            if (response.ok) {
-                window.location.href = '/login';
-            } else {
-                console.log(response)
-                console.error('Signup failed');
-            }
-        } catch (error) {
-            console.error('Error during signup:', error);
-        }
-    };*/
-
-
-
-
-    const toggleSublist = async () => {
-        setIsOpen(!isOpen);
-        if (!isOpen) {
-            const childFolders = await fetchChildFolders(item.id);
-            const childFiles = await fetchChildFiles(item.id);
-            setSubItems(childFolders.concat(childFiles));
-            // const folderFiles = await fetchFiles(item.id);
-            // setFiles(folderFiles);
-        }
-    };
-
-/*
-    const handleContextMenu = (e) => {
-        e.preventDefault();
-        setShowContextMenu(true);
-        setContextMenuPosition({ x: e.pageX, y: e.pageY });
-    };
-
-    const handleCreateFolder = () => {
-        // createFolder(item.id);
-        console.log('Creating folder' + `${item.id}`)
-        setShowContextMenu(false);
-    };
-*/
-    return (
-        <div>
-            <div className="main-list-item" style={{display:"flex", justifyContent:'space-between'}}>
-                <div className="main-list-item">
-                    {item.content == null && (
-                        <button className="main-list-button" onClick={toggleSublist}>
-                            {isOpen ? '˅' : '>'}
-                        </button>
-                    )}
-                    <div className="main-list-item">
-                        {item.content == null && (
-                         <img src='/folder.png' alt={item.name}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
-                        )}
-                        {item.content != null && (
-                            <img src='/file.png' alt={item.name}  style={{width: '30px', height: '30px', marginRight: '10px'}}/>
-                        )}
-                        <div className="main-list-text">{item.name}</div>
-                    </div>
-                </div>
-                <div className="dropdown">
-                    <button className="create-folder-button">⋮</button>
-                    <div className="dropdown-content">
-                        {!item.isFile && (<a onClick={() => onCreateFolder(item.id, subItems.length)}>Add file</a>)}
-                        {!item.isFile && (<a onClick={() => onCreateFolder(item.id, subItems.length)}>Add folder</a>)}
-                        <a onClick={() => onCreateFolder(item.id, subItems.length)}>Delete</a>
-                    </div>
-                </div>
-
-            </div>
-            {isOpen && subItems && (
-                <ul style={{listStyleType: "none", margin:"0"}}>
-                    {subItems.map((subItem, index) => (
-                        <li key={index}>
-                            <ListItem item={subItem}
-                                      fetchChildFolders={fetchChildFolders}
-                                      onCreateFolder={onCreateFolder}
-                                      fetchChildFiles={fetchChildFiles} />
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    );
-};
+import ListItem from "./ListItem";
 
 const Project = () => {
     const { projectId } = useParams();
@@ -112,6 +9,8 @@ const Project = () => {
     const [rootFiles, setRootFiles] = useState([]);
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
+    const inputFileNameRef = useRef(null);
+    const inputFolderNameRef = useRef(null);
     const jwtToken = localStorage.getItem('jwtToken');
 
     const fetchChildFolders = async (folderId) => {
@@ -140,7 +39,7 @@ const Project = () => {
         }
     };
     
-    useState(() => {
+    useEffect(() => {
         const fetchRootFolders = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${projectId}/project-root-folders`);
@@ -159,8 +58,8 @@ const Project = () => {
         fetchRootFolders();
     }, [projectId]);
 
-    useState(() => {
-        const fetchRootFiles = async (projectId) => {
+    useEffect(() => {
+        const fetchRootFiles = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/project/${projectId}`);
                 if (!response.ok) {
@@ -197,9 +96,9 @@ const Project = () => {
         fetchProject();
     }, [projectId]);
 
-    if (loading) {
+    /*if (loading) {
         return <div>Loading...</div>;
-    }
+    }*/
 
     const createFolder = async (parentId, name) => {
         try {
@@ -213,7 +112,9 @@ const Project = () => {
             });
 
             if (response.ok) {
+                const date = await response.json()
                 console.log('Folder created successfully');
+                return(date);
             } else {
                 console.error('Failed to create folder');
             }
@@ -222,26 +123,103 @@ const Project = () => {
         }
     };
 
-    /*const createFile = async (parentId, name) => {
+    const createFolderInProject = async (name) => {
         try {
             const formData = new FormData();
-            formData.append('parentFolderId', parentId);
+            formData.append('parentProjectId', projectId);
             formData.append('name', name);
+            inputFolderNameRef.current.value = "";
 
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/${parentIdId}`, {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/project/create`, {
                 method: 'POST',
                 body: formData
             });
 
             if (response.ok) {
+                const date = await response.json()
                 console.log('Folder created successfully');
+                return(date);
             } else {
                 console.error('Failed to create folder');
             }
         } catch (error) {
             console.error('Error creating folder:', error);
         }
-    };*/
+    };
+
+    const createFileInProject = async (name) => {
+        try {
+            const formData = new FormData();
+            formData.append('parentProjectId', projectId);
+            formData.append('name', name);
+            inputFileNameRef.current.value = "";
+
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/project`, {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                response.json().then((date)=>{
+                    setRootFiles((prev)=>[...prev, date])
+                })
+                console.log('File created successfully');
+            } else {
+                console.error('Failed to create file');
+            }
+        } catch (error) {
+            console.error('Error creating file:', error);
+        }
+    };
+
+    const createFileInFolder = async (parentId, name) => {
+        try {
+            const formData = new FormData();
+            formData.append('parentFolderId', parentId);
+            formData.append('name', name);
+
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/folder`, {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                const date = await response.json()
+                console.log('File created successfully');
+                return(date);
+            } else {
+                console.error('Failed to create file');
+            }
+        } catch (error) {
+            console.error('Error creating file:', error);
+        }
+    };
+
+    const deleteFile = async (id) => {
+        try {
+            const formData = new FormData();
+            formData.append('id', id);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/${id}`, {
+                method: 'DELETE',
+                body: formData
+            });
+            if (response.ok) {
+                console.log('File deleted successfully');
+            } else {
+                console.error('Failed to delete file');
+            }
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        }
+    };
+
+    const rootFilesView = useMemo(() => rootFiles.map((item, index) => (
+        <ListItem key={index} item={item}
+                  fetchChildFolders={fetchChildFolders}
+                  onCreateFolder={createFolder}
+                  fetchChildFiles={fetchChildFiles}
+                  onCreateFile={createFileInFolder}
+                  deleteFile={deleteFile}
+        />
+    )), [rootFiles]);
 
     return (
         <div className="app">
@@ -269,25 +247,36 @@ const Project = () => {
                         <div className="dropdown">
                             <button className="create-folder-button">⋮</button>
                             <div className="dropdown-content">
-                                <a class="create-file">
+                                <a className="create-file">
                                     Add file
                                     <div className="dropdown-file-form">
                                         <form className="file-form" onSubmit={(e) => e.preventDefault()}>
                                             <label htmlFor="name">Enter file name:</label>
-                                            <input type="text" id="name" name="name" />
-                                            <button onClick={() => createFolder(document.getElementById('name').value)}>
+                                            <input type="text" ref={inputFileNameRef} id="name" name="name" />
+                                            <button onClick={() => createFileInProject(inputFileNameRef.current.value)}>
                                                 Submit
                                             </button>
                                         </form>
                                     </div>
                                 </a>
-                                <a class="create-file">
+                                <a className="create-file">
                                     Add folder
                                     <div className="dropdown-file-form">
                                         <form className="file-form" onSubmit={(e) => e.preventDefault()}>
                                             <label htmlFor="name">Enter folder name:</label>
-                                            <input type="text" id="name" name="name" />
-                                            <button onClick={() => createFolder(document.getElementById('name').value)}>
+                                            <input type="text" ref={inputFolderNameRef} id="name" name="name" />
+                                            <button onClick={() => createFolderInProject(inputFolderNameRef.current.value).then((data) => {
+                                                setRootFolders(prev => [...rootFolders, data].sort(
+                                                    function(a,b){
+                                                        let x = a.name.toLowerCase();
+                                                        let y = b.name.toLowerCase();
+
+                                                        if(x>y){return -1;}
+                                                        if(x<y){return 1;}
+                                                        return 0;})
+                                                    .sort((a) =>  a.content !== undefined ? 1 : -1));
+                                                inputFolderNameRef.current.value = "";
+                                            })}>
                                                 Submit
                                             </button>
                                         </form>
@@ -300,9 +289,20 @@ const Project = () => {
                         <ListItem key={index} item={item}
                                   fetchChildFolders={fetchChildFolders}
                                   onCreateFolder={createFolder}
-                                  fetchChildFiles={fetchChildFiles} />
+                                  fetchChildFiles={fetchChildFiles}
+                                  onCreateFile={createFileInFolder}
+                                  deleteFile={deleteFile}
+                        />
                     ))}
-
+                    {/*{rootFiles.map((item, index) => (
+                        <ListItem key={index} item={item}
+                        fetchChildFolders={fetchChildFolders}
+                        onCreateFolder={createFolder}
+                        fetchChildFiles={fetchChildFiles}
+                        onCreateFile={createFileInFolder}
+                        />
+                    ))}*/}
+                    {rootFilesView}
                 </div>
                 <div className="main-right-block">
                     <textarea className="main-textarea"></textarea>
