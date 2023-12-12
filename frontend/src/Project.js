@@ -13,7 +13,7 @@ const Project = () => {
     const inputFolderNameRef = useRef(null);
     const jwtToken = localStorage.getItem('jwtToken');
     const setContent = useRef("");
-    const [isClicked, setIsClicked] = useState(false);
+    const [isClicked, setIsClicked] = useState(true);
 
     const fetchChildFolders = async (folderId) => {
         try {
@@ -40,7 +40,7 @@ const Project = () => {
             return [];
         }
     };
-    
+
     useEffect(() => {
         const fetchRootFolders = async () => {
             try {
@@ -351,7 +351,7 @@ const Project = () => {
                     {rootFilesView}
                 </div>
                 <div className="main-right-block">
-                    <textarea className="main-textarea" ref={setContent}></textarea>
+                    <textarea className="main-textarea" spellCheck={false} ref={setContent}></textarea>
                 </div>
             </div>
         </div>
