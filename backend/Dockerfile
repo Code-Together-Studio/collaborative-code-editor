@@ -13,7 +13,7 @@ RUN chmod +x ./gradlew
 
 RUN ./gradlew build
 
-FROM openjdk:19-jre
+FROM openjdk:11-ea-19-jre
 
 COPY --from=build /app/build/libs/*.jar /app/app.jar
 
