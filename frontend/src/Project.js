@@ -5,7 +5,6 @@ import ListItem from "./ListItem";
 
 const Project = () => {
     const { projectId, fileId } = useParams();
-    const navigate = useNavigate();
     const [rootFolders, setRootFolders] = useState([]);
     const [rootFiles, setRootFiles] = useState([]);
     const [project, setProject] = useState(null);
@@ -67,13 +66,6 @@ const Project = () => {
         };
 
         fetchRootFolders();
-        if (selectedFile === null && fileId) {
-            fetchFileDetails(fileId).then(file => {
-                if (file) {
-                    setSelectedFile(file);
-                }
-            });
-        }
     }, [projectId, fileId]);
 
     useEffect(() => {
@@ -367,10 +359,10 @@ const Project = () => {
                     {rootFilesView}
                 </div>
                 <div className="main-right-block">
-                    {selectedFile && selectedFile.content !== undefined ? (
-                        <textarea className="main-textarea" value={selectedFile.content} ref={setContent}></textarea>
+                    {setContent !== undefined ? (
+                        <textarea className="main-textarea" ref={setContent}></textarea>
                     ) : (
-                        <textarea className="main-textarea" disabled placeholder="Select a file to view/edit its content" ref={setContent}></textarea>
+                        <textarea className="main-textarea" disabled placeholder="Select a file to view/edit its content"></textarea>
                     )}
                 </div>
 
