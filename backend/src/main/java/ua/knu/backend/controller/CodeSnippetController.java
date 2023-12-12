@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/code-snippet")
+@CrossOrigin
 public class CodeSnippetController {
 
     private final CodeSnippetService codeSnippetService;
