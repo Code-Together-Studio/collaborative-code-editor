@@ -1,4 +1,4 @@
-FROM openjdk:11-ea-19-jre
+FROM openjdk:19-jdk-slim
 
 VOLUME /tmp
 COPY *.jar backend.jar
