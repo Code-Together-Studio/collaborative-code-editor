@@ -63,10 +63,10 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, onCreateFile, fetch
                         </button>
                     )}
                     <div className="main-list-item">
-                        {item.content == undefined && (
+                        {item.content === undefined && (
                             <img src='/folder.png' alt={item.name} style={{ width: '30px', height: '30px', marginRight: '10px' }} />
                         )}
-                        {item.content != undefined && (
+                        {item.content !== undefined && (
                             <img src='/file.png' alt={item.name} style={{ width: '30px', height: '30px', marginRight: '10px' }} />
                         )}
                         <div className="main-list-text">{item.name}</div>
@@ -75,8 +75,8 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, onCreateFile, fetch
                 <div className="dropdown">
                     <button className="create-folder-button">⋮</button>
                     <div className="dropdown-content">
-                        {!item.isFile && (<a onClick={() => onCreateFile(item.id, subItems.length)}>Add file</a>)}
-                        {!item.isFile && (<a onClick={() => onCreateFolder(item.id, subItems.length)}>Add folder</a>)}
+                        {item.content === undefined && (<a onClick={() => onCreateFile(item.id, subItems.length)}>Add file</a>)}
+                        {item.content === undefined && (<a onClick={() => onCreateFolder(item.id, subItems.length)}>Add folder</a>)}
                         <a onClick={() => onCreateFolder(item.id, subItems.length)}>Delete</a>
                     </div>
                 </div>
