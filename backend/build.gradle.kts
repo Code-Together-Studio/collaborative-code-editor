@@ -43,6 +43,14 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
+configure<org.springframework.boot.gradle.dsl.SpringBootExtension> {
+    mainClass.set("ua.knu.backend.BackendApplication")
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    mainClass.set("ua.knu.backend.BackendApplication")
+}
+
 tasks.withType<Test> {
     useJUnitPlatform()
 }

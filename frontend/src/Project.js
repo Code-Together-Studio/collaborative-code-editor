@@ -4,7 +4,8 @@ import './Project.css';
 import ListItem from "./ListItem";
 
 const Project = () => {
-    const { projectId } = useParams();
+    const { projectId, fileId } = useParams();
+    const navigate = useNavigate();
     const [rootFolders, setRootFolders] = useState([]);
     const [rootFiles, setRootFiles] = useState([]);
     const [project, setProject] = useState(null);
@@ -45,6 +46,7 @@ const Project = () => {
         const fetchRootFolders = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${projectId}/project-root-folders`);
+                console.log(response)
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -65,7 +67,14 @@ const Project = () => {
         };
 
         fetchRootFolders();
-    }, [projectId]);
+        if (selectedFile === null && fileId) {
+            fetchFileDetails(fileId).then(file => {
+                if (file) {
+                    setSelectedFile(file);
+                }
+            });
+        }
+    }, [projectId, fileId]);
 
     useEffect(() => {
         const fetchRootFiles = async () => {
@@ -112,17 +121,21 @@ const Project = () => {
         fetchProject();
     }, [projectId]);
 
-    /*if (loading) {
-        return <div>Loading...</div>;
-    }*/
 
     const createFolder = async (parentId, name) => {
         try {
             const formData = new FormData();
-            formData.append('parentFolderId', parentId);
+            var url = `${process.env.REACT_APP_BACKEND_URL}/folders/create`
+            if (parentId !== null) {
+                formData.append('parentFolderId', parentId);
+            }
+            else {
+                formData.append('parentProjectId', projectId);
+                url = `${process.env.REACT_APP_BACKEND_URL}/folders/project/create`
+            }
             formData.append('name', name);
 
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/create`, {
+            const response = await fetch(url, {
                 method: 'POST',
                 body: formData
             });
@@ -141,6 +154,7 @@ const Project = () => {
 
     const createFolderInProject = async (name) => {
         try {
+            var url = `${process.env.REACT_APP_BACKEND_URL}/code-snippet/folder`
             const formData = new FormData();
             formData.append('parentProjectId', projectId);
             formData.append('name', name);
@@ -156,13 +170,13 @@ const Project = () => {
                 console.log('Folder created successfully');
                 return(date);
             } else {
-                console.error('Failed to create folder');
+                console.error('Failed to create file');
             }
         } catch (error) {
-            console.error('Error creating folder:', error);
+            console.error('Error creating file:', error);
         }
     };
-
+  
     const createFileInProject = async (name) => {
         try {
             const formData = new FormData();
@@ -267,18 +281,20 @@ const Project = () => {
     return (
         <div className="app">
             <div className="header">
-                <div style={{display: "flex", alignItems: "center"}}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                     <div className="icon-container">
+
                         <img className="icon" style={{height: "35px", width:"auto"}} src="/menu.png" alt="icon" onClick={handleChange}/>
                         <img className="icon" src="/logo.png" alt="icon"/>
+
                     </div>
                     <a href="/home" className="siteName">CodeTogether</a>
                 </div>
                 <div className="button-container">
                     {!jwtToken && (
                         <>
-                            <a href="signup"><button className="home-button" style={{borderRadius: "10px"}} >Sign up</button></a>
-                            <a href="login"><button className="home-button" style={{borderRadius: "10px"}} >Log in</button></a>
+                            <a href="signup"><button className="home-button" style={{ borderRadius: "10px" }} >Sign up</button></a>
+                            <a href="login"><button className="home-button" style={{ borderRadius: "10px" }} >Log in</button></a>
                         </>
                     )}
                 </div>
@@ -337,7 +353,7 @@ const Project = () => {
                             </div>
                         </div>
                     </div>
-                    {rootFolders.map((item, index) => (
+                    {rootFolders.concat(rootFiles).map((item, index) => (
                         <ListItem key={index} item={item}
                                   fetchChildFolders={fetchChildFolders}
                                   onCreateFolder={createFolder}
@@ -351,8 +367,13 @@ const Project = () => {
                     {rootFilesView}
                 </div>
                 <div className="main-right-block">
-                    <textarea className="main-textarea" spellCheck={false} ref={setContent}></textarea>
+                    {selectedFile && selectedFile.content !== undefined ? (
+                        <textarea className="main-textarea" value={selectedFile.content} ref={setContent}></textarea>
+                    ) : (
+                        <textarea className="main-textarea" disabled placeholder="Select a file to view/edit its content" ref={setContent}></textarea>
+                    )}
                 </div>
+
             </div>
         </div>
     );
