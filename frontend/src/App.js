@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Main from './Main';
 import Home from './Home';
 import ActiveProjects from './ActiveProjects';
 import Test from './Test';
@@ -20,6 +19,7 @@ function App() {
                 <Route exact path="/signup" element={<Signup/>}/>
                 <Route exact path="/projectSetup" element={<ProjectSetup/>}/>
                 <Route path="/project/:projectId" element={<Project/>} />
+                <Route path="/project/:projectId/file/:fileId" element={<Project/>} />
             </Routes>
         </Router>
     )
