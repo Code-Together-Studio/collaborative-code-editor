@@ -43,12 +43,12 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
-tasks.jar {
-    manifest {
-        attributes(
-            "Main-Class" to "ua.knu.backend.BackendApplication"
-        )
-    }
+configure<org.springframework.boot.gradle.dsl.SpringBootExtension> {
+    mainClass.set("ua.knu.backend.BackendApplication")
+}
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    mainClass.set("ua.knu.backend.BackendApplication")
 }
 
 tasks.withType<Test> {
