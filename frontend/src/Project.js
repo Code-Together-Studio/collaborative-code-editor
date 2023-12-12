@@ -5,16 +5,26 @@ import ListItem from "./ListItem";
 
 const Project = () => {
     const { projectId, fileId } = useParams();
-    const navigate = useNavigate();
     const [rootFolders, setRootFolders] = useState([]);
     const [rootFiles, setRootFiles] = useState([]);
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const inputFileNameRef = useRef(null);
     const inputFolderNameRef = useRef(null);
+    const labelFolderErrorRef = useRef(null);
     const jwtToken = localStorage.getItem('jwtToken');
-    const setContent = useRef("");
     const [isClicked, setIsClicked] = useState(true);
+    const [selectedFile, setSelectedFile] = useState(null);
+
+
+    const fileSelect = (file) => {
+        setSelectedFile(file)
+    }
+
+
+    const handleLogout = () => {
+        localStorage.removeItem('jwtToken');
+    };
 
     const fetchChildFolders = async (folderId) => {
         try {
@@ -67,13 +77,6 @@ const Project = () => {
         };
 
         fetchRootFolders();
-        if (selectedFile === null && fileId) {
-            fetchFileDetails(fileId).then(file => {
-                if (file) {
-                    setSelectedFile(file);
-                }
-            });
-        }
     }, [projectId, fileId]);
 
     useEffect(() => {
@@ -141,9 +144,9 @@ const Project = () => {
             });
 
             if (response.ok) {
-                const date = await response.json()
+                const data = await response.json()
                 console.log('Folder created successfully');
-                return(date);
+                return(data);
             } else {
                 console.error('Failed to create folder');
             }
@@ -154,23 +157,42 @@ const Project = () => {
 
     const createFolderInProject = async (name) => {
         try {
-            var url = `${process.env.REACT_APP_BACKEND_URL}/code-snippet/folder`
+            let url = `${process.env.REACT_APP_BACKEND_URL}/code-snippet/folder`;
+            let isExist = false;
             const formData = new FormData();
             formData.append('parentProjectId', projectId);
             formData.append('name', name);
-            inputFolderNameRef.current.value = "";
+            rootFolders.map((item) => {
+                if(item.name === name) {
+                    labelFolderErrorRef.current.innerText  = "folder exists";
+                    isExist = true;
+                }
+            })
+            if(isExist === false) {
+                inputFolderNameRef.current.value = "";
+                labelFolderErrorRef.current.innerText = "";
 
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/project/create`, {
-                method: 'POST',
-                body: formData
-            });
+                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/project/create`, {
+                    method: 'POST',
+                    body: formData
+                });
 
-            if (response.ok) {
-                const date = await response.json()
-                console.log('Folder created successfully');
-                return(date);
-            } else {
-                console.error('Failed to create file');
+                if (response.ok) {
+                    const dataFolder = await response.json()
+                    setRootFolders(prev => [...rootFolders].sort(
+                        function(a,b){
+                            let x = a.name.toLowerCase();
+                            let y = b.name.toLowerCase();
+
+                            if(x > y){return 1;}
+                            if(x < y){return -1;}
+                            return 0;}))
+                    setRootFolders(prev => [...rootFolders, dataFolder]);
+                    console.log('Folder created successfully');
+                    return (dataFolder);
+                } else {
+                    console.error('Failed to create file');
+                }
             }
         } catch (error) {
             console.error('Error creating file:', error);
@@ -192,9 +214,9 @@ const Project = () => {
                 /*response.json().then((data)=>{
                     setRootFiles((prev)=>[...prev, data])
                 })*/
-                const date = await response.json()
+                const data = await response.json()
                 console.log('File created successfully');
-                return(date);
+                return(data);
             } else {
                 console.error('Failed to create file');
             }
@@ -269,7 +291,7 @@ const Project = () => {
                   onCreateFile={createFileInFolder}
                   deleteFile={deleteFile}
                   deleteFolder={deleteFolder}
-                  setContent={setContent}
+                  fileSelect={fileSelect}
         />
     )), [rootFiles]);
 
@@ -291,10 +313,15 @@ const Project = () => {
                     <a href="/home" className="siteName">CodeTogether</a>
                 </div>
                 <div className="button-container">
+                    {jwtToken && (
+                        <>
+                            <a href="/logout"><button className="home-button" style={{ borderRadius: "10px" }} onClick={handleLogout} >Logout</button></a>
+                        </>
+                    )}
                     {!jwtToken && (
                         <>
-                            <a href="signup"><button className="home-button" style={{ borderRadius: "10px" }} >Sign up</button></a>
-                            <a href="login"><button className="home-button" style={{ borderRadius: "10px" }} >Log in</button></a>
+                            <a href="/signup"><button className="home-button" style={{ borderRadius: "10px" }} >Sign up</button></a>
+                            <a href="/login"><button className="home-button" style={{ borderRadius: "10px" }} >Log in</button></a>
                         </>
                     )}
                 </div>
@@ -334,17 +361,8 @@ const Project = () => {
                                         <form className="file-form" onSubmit={(e) => e.preventDefault()}>
                                             <label htmlFor="name">Enter folder name:</label>
                                             <input type="text" ref={inputFolderNameRef} id="name" name="name" />
-                                            <button onClick={() => createFolderInProject(inputFolderNameRef.current.value).then((data) => {
-                                                setRootFolders(prev => [...rootFolders, data].sort(
-                                                    function(a,b){
-                                                        let x = a.name.toLowerCase();
-                                                        let y = b.name.toLowerCase();
-
-                                                        if(x > y){return 1;}
-                                                        if(x < y){return -1;}
-                                                        return 0;}));
-                                                inputFolderNameRef.current.value = "";
-                                            })}>
+                                            <label ref={labelFolderErrorRef}></label>
+                                            <button onClick={() => createFolderInProject(inputFolderNameRef.current.value)}>
                                                 Submit
                                             </button>
                                         </form>
@@ -361,16 +379,15 @@ const Project = () => {
                                   onCreateFile={createFileInFolder}
                                   deleteFile={deleteFile}
                                   deleteFolder={deleteFolder}
-                                  setContent={setContent}
+                                  fileSelect={fileSelect}
                         />
                     ))}
-                    {rootFilesView}
                 </div>
                 <div className="main-right-block">
-                    {selectedFile && selectedFile.content !== undefined ? (
-                        <textarea className="main-textarea" value={selectedFile.content} ref={setContent}></textarea>
+                    {selectedFile && selectedFile !== undefined ? (
+                        <textarea className="main-textarea" value={selectedFile.content}></textarea>
                     ) : (
-                        <textarea className="main-textarea" disabled placeholder="Select a file to view/edit its content" ref={setContent}></textarea>
+                        <textarea className="main-textarea" disabled placeholder="Select a file to view/edit its content"></textarea>
                     )}
                 </div>
 
