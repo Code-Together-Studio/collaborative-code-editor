@@ -6,37 +6,6 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
     const inputFileRef = useRef(null);
     const inputFolderRef = useRef(null);
 
-    /*
-        const [showContextMenu, setShowContextMenu] = useState(false);
-        const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
-    */
-
-    /* const createFolder = async (e) => {
-         e.preventDefault();
-
-         try {
-             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/folders/create`, {
-                 method: 'POST',
-                 headers: {
-                     'Content-Type': 'application/json',
-                 },
-                 body: JSON.stringify({ , password }),
-             });
-
-             if (response.ok) {
-                 window.location.href = '/login';
-             } else {
-                 console.log(response)
-                 console.error('Signup failed');
-             }
-         } catch (error) {
-             console.error('Error during signup:', error);
-         }
-     };*/
-
-
-
-
     const toggleSublist = async () => {
         setIsOpen(!isOpen);
         if (!isOpen) {
@@ -62,19 +31,6 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
         }
     };
 
-    /*
-        const handleContextMenu = (e) => {
-            e.preventDefault();
-            setShowContextMenu(true);
-            setContextMenuPosition({ x: e.pageX, y: e.pageY });
-        };
-
-        const handleCreateFolder = () => {
-            // createFolder(item.id);
-            console.log('Creating folder' + `${item.id}`)
-            setShowContextMenu(false);
-        };
-    */
     return (
         <div>
             <div className="main-list-item" style={{display:"flex", justifyContent:'space-between'}} onClick={() => {
@@ -85,7 +41,7 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                 <div className="main-list-item">
                     {item.content === undefined && (
                         <button className="main-list-button" onClick={toggleSublist}>
-                            {isOpen ? '˅' : '>'}
+                            {isOpen ? ('˅') : ('>')}
                         </button>
                     )}
                     <div className="main-list-item">
