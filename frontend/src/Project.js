@@ -15,6 +15,11 @@ const Project = () => {
     const setContent = useRef("");
     const [isClicked, setIsClicked] = useState(true);
 
+
+    const handleLogout = () => {
+        localStorage.removeItem('jwtToken');
+    };
+
     const fetchChildFolders = async (folderId) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${folderId}/child-folders`);
@@ -283,10 +288,15 @@ const Project = () => {
                     <a href="/home" className="siteName">CodeTogether</a>
                 </div>
                 <div className="button-container">
+                    {jwtToken && (
+                        <>
+                            <a href="/logout"><button className="home-button" style={{ borderRadius: "10px" }} onClick={handleLogout} >Logout</button></a>
+                        </>
+                    )}
                     {!jwtToken && (
                         <>
-                            <a href="signup"><button className="home-button" style={{ borderRadius: "10px" }} >Sign up</button></a>
-                            <a href="login"><button className="home-button" style={{ borderRadius: "10px" }} >Log in</button></a>
+                            <a href="/signup"><button className="home-button" style={{ borderRadius: "10px" }} >Sign up</button></a>
+                            <a href="/login"><button className="home-button" style={{ borderRadius: "10px" }} >Log in</button></a>
                         </>
                     )}
                 </div>
