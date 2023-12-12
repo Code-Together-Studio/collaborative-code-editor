@@ -83,7 +83,7 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                 )}
             }}>
                 <div className="main-list-item">
-                    {item.content == null && (
+                    {item.content === undefined && (
                         <button className="main-list-button" onClick={toggleSublist}>
                             {isOpen ? '˅' : '>'}
                         </button>
@@ -128,11 +128,13 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                         {item.content == null && (<a className="create-file">
                             Add folder
                             <div className="dropdown-file-form">
-                                <form className="file-form" onSubmit={(e) => e.preventDefault()}>
+                                <form className="file-form">
                                     <label htmlFor="folderName">Enter folder name:</label>
                                     <input type="text" ref={inputFolderRef} id="folderName" name="folderName"/>
                                     <button onClick={() => {
+                                        console.log("data");
                                         onCreateFolder(item.id, inputFolderRef.current.value).then((data) => {
+                                            console.log(data);
                                             setSubItems(prev => [...subItems, data].sort(
                                                 function(a,b){
                                                 let x = a.name.toLowerCase();
