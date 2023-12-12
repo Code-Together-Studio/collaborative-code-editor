@@ -33,6 +33,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis:2.7.11")
 
     implementation("redis.clients:jedis:3.7.0")
+    implementation("org.springframework.boot:spring-boot-starter-websocket:3.1.6")
 
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")

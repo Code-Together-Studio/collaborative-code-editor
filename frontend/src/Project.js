@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 import './Project.css';
 
 const ListItem = ({ item, fetchChildFolders, onCreateFolder, onCreateFile, fetchChildFiles, onFileSelect, openFolders, setOpenFolders }) => {
@@ -112,6 +114,36 @@ const Project = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [openFolders, setOpenFolders] = useState(new Set());
     const jwtToken = localStorage.getItem('jwtToken');
+    const [textareaContent, setTextareaContent] = useState("");
+
+    const [stompClient, setStompClient] = useState(null);
+
+    useEffect(() => {
+        const socket = new SockJS('http://localhost:8081/ws');
+        const client = new Client({
+            webSocketFactory: () => socket,
+            onConnect: () => {
+                console.log('Connected');
+
+                client.subscribe('/topic/updates', message => {
+                    const parsedMessage = JSON.parse(message.body);
+                    if (parsedMessage.fileId && parsedMessage.fileId === fileId) {
+                        setTextareaContent(parsedMessage.content);
+                    }
+                });
+            },
+            onDisconnect: () => {
+                console.log('Disconnected');
+            }
+        });
+
+        client.activate();
+        setStompClient(client);
+
+        return () => {
+            client.deactivate();
+        };
+    }, []);
 
     const fetchChildFolders = async (folderId) => {
         try {
@@ -156,7 +188,6 @@ const Project = () => {
         const fetchRootFolders = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${projectId}/project-root-folders`);
-                console.log(response)
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -174,6 +205,7 @@ const Project = () => {
             fetchFileDetails(fileId).then(file => {
                 if (file) {
                     setSelectedFile(file);
+                    setTextareaContent(file.content);
                 }
             });
         }
@@ -325,7 +357,19 @@ const Project = () => {
 
     const handleFileSelect = (file) => {
         setSelectedFile(file);
+        setTextareaContent(file.content);
+
         navigate(`/project/${projectId}/file/${file.id}`);
+    };
+
+    const handleTextareaChange = (event) => {
+        const content = event.target.value;
+
+        if (stompClient && stompClient.connected) {
+            setTextareaContent(content);   
+            const message = JSON.stringify({ fileId: fileId, content: content });
+            stompClient.publish({ destination: '/app/change', body: message });
+        }
     };
 
     return (
@@ -395,7 +439,7 @@ const Project = () => {
                 </div>
                 <div className="main-right-block">
                     {selectedFile && selectedFile.content !== undefined ? (
-                        <textarea className="main-textarea" value={selectedFile.content}></textarea>
+                        <textarea className="main-textarea" value={textareaContent} onChange={handleTextareaChange}></textarea>
                     ) : (
                         <textarea className="main-textarea" disabled placeholder="Select a file to view/edit its content"></textarea>
                     )}
