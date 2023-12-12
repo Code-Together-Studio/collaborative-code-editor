@@ -179,7 +179,7 @@ const Project = () => {
 
                 if (response.ok) {
                     const dataFolder = await response.json()
-                    setRootFolders(prev => [...rootFolders, dataFolder].sort(
+                    setRootFolders(prev => [...rootFolders].sort(
                         function(a,b){
                             let x = a.name.toLowerCase();
                             let y = b.name.toLowerCase();
@@ -187,6 +187,7 @@ const Project = () => {
                             if(x > y){return 1;}
                             if(x < y){return -1;}
                             return 0;}))
+                    setRootFolders(prev => [...rootFolders, dataFolder]);
                     console.log('Folder created successfully');
                     return (dataFolder);
                 } else {
