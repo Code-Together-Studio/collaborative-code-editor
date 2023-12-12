@@ -1,4 +1,4 @@
-FROM openjdk:20-jdk as build
+FROM openjdk:19-jdk as build
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN chmod +x ./gradlew
 
 RUN ./gradlew build
 
-FROM openjdk:20-jre
+FROM openjdk:19-jre
 
 COPY --from=build /app/build/libs/*.jar /app/app.jar
 
