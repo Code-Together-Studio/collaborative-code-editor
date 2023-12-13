@@ -169,7 +169,7 @@ const Project = () => {
     }, [projectId]);
 
     useEffect(() => {
-        const socket = new SockJS(`http://localhost:8081/ws`);
+        const socket = new SockJS(`${process.env.REACT_APP_BACKEND_URL}/ws`);
         const client = new Client({
             webSocketFactory: () => socket,
             onConnect: () => {
