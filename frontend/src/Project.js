@@ -1,9 +1,13 @@
 import React, {useState, useEffect, useMemo, useRef} from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 import './Project.css';
 import ListItem from "./ListItem";
 
 const Project = () => {
+    const navigate = useNavigate();
+
     const { projectId, fileId } = useParams();
     const [rootFolders, setRootFolders] = useState([]);
     const [rootFiles, setRootFiles] = useState([]);
@@ -16,9 +20,25 @@ const Project = () => {
     const [isClicked, setIsClicked] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
 
+    const [textareaContent, setTextareaContent] = useState(null);
+    const [stompClient, setStompClient] = useState(null);
 
-    const fileSelect = (file) => {
-        setSelectedFile(file)
+
+    const fileSelect = async (file) => {
+        const newFile = await fetchFileDetails(file.id);
+        if (newFile) {
+            setSelectedFile(newFile);
+            setTextareaContent(newFile.content);
+        }
+        else {
+            setSelectedFile(file);
+            setTextareaContent(file.content);
+        }
+        navigate(`/project/${projectId}/file/${file.id}`);
+        
+        // const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/${fileId}/content`);
+        // const content = await response.text();
+        // setTextareaContent(content);
     }
 
 
@@ -52,11 +72,26 @@ const Project = () => {
         }
     };
 
+    const fetchFileDetails = async (fileId) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/${fileId}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.log('Error fetching file:', error);
+            return null;
+        }
+        finally{
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         const fetchRootFolders = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${projectId}/project-root-folders`);
-                console.log(response)
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -77,7 +112,7 @@ const Project = () => {
         };
 
         fetchRootFolders();
-    }, [projectId, fileId]);
+    }, [projectId]);
 
     useEffect(() => {
         const fetchRootFiles = async () => {
@@ -103,7 +138,16 @@ const Project = () => {
         };
 
         fetchRootFiles();
-    }, [projectId]);
+
+        if (selectedFile === null && fileId) {
+            fetchFileDetails(fileId).then(file => {
+                if (file) {
+                    setSelectedFile(file);
+                    setTextareaContent(file.content);
+                }
+            });
+        }
+    }, [projectId, fileId]);
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -123,6 +167,38 @@ const Project = () => {
 
         fetchProject();
     }, [projectId]);
+
+    useEffect(() => {
+        const socket = new SockJS(`http://localhost:8081/ws`);
+        const client = new Client({
+            webSocketFactory: () => socket,
+            onConnect: () => {
+                console.log('Connected');
+
+                client.subscribe('/topic/updates', message => {
+                    const parsedMessage = JSON.parse(message.body);
+                    var id = +fileId;
+                    if (selectedFile) {
+                        id = +selectedFile.id
+                    }
+                    if (parsedMessage.fileId && parsedMessage.fileId === id) {
+                        setTextareaContent(parsedMessage.content);
+                        setLoading(false);
+                    }
+                });
+            },
+            onDisconnect: () => {
+                console.log('Disconnected');
+            }
+        });
+
+        client.activate();
+        setStompClient(client);
+
+        return () => {
+            client.deactivate();
+        };
+    }, []);
 
 
     const createFolder = async (parentId, name) => {
@@ -300,6 +376,18 @@ const Project = () => {
     };
     const leftBlockClassName = isClicked ? "main-left-block" : "main-left-block-absent"
 
+    const handleTextareaChange = (event) => {
+        if (loading) return;
+
+        setLoading(true);
+        const content = event.target.value;
+
+        if (stompClient && stompClient.connected) {
+            const message = JSON.stringify({ fileId: fileId, content: content });
+            stompClient.publish({ destination: '/app/change', body: message });
+        }
+    };
+
     return (
         <div className="app">
             <div className="header">
@@ -384,8 +472,8 @@ const Project = () => {
                     ))}
                 </div>
                 <div className="main-right-block">
-                    {selectedFile && selectedFile !== undefined ? (
-                        <textarea className="main-textarea" value={selectedFile.content}></textarea>
+                    {textareaContent !== null ? (
+                        <textarea className="main-textarea" value={textareaContent} onChange={handleTextareaChange}></textarea>
                     ) : (
                         <textarea className="main-textarea" disabled placeholder="Select a file to view/edit its content"></textarea>
                     )}

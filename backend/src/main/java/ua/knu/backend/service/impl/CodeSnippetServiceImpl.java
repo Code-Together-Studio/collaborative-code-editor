@@ -12,6 +12,9 @@ import ua.knu.backend.web.dto.CodeSnippetDto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CodeSnippetServiceImpl implements CodeSnippetService {
@@ -21,6 +24,8 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     private final CodeSnippetCashableRepository codeSnippetCashableRepository;
 
     private final ProjectRepository projectRepository;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
+
 
     public CodeSnippetServiceImpl(CodeSnippetRepository codeSnippetRepository, FolderRepository folderRepository, CodeSnippetCashableRepository codeSnippetCashableRepository, ProjectRepository projectRepository) {
         this.codeSnippetRepository = codeSnippetRepository;
@@ -57,9 +62,21 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
 
     @Override
     public void saveInDb(Integer id, String content) {
-        CodeSnippet codeSnippet = codeSnippetRepository.getById(id);
+        CodeSnippet codeSnippet = codeSnippetRepository.findById(id).get();
+        if (content == null) {
+            String cacheContent = codeSnippetCashableRepository.getContentById(id);
+            codeSnippet.setContent(cacheContent);
+        }
+        else {
+            codeSnippet.setContent(content);
+        }
         codeSnippet.setModifiedAt(new Date());
         codeSnippetRepository.save(codeSnippet);
+    }
+
+
+    public void scheduleSaveInDb(Integer id) {
+        scheduler.schedule(() -> saveInDb(id, null), 10, TimeUnit.MINUTES);
     }
 
     @Override
