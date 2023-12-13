@@ -18,11 +18,9 @@ const Login = () => {
                 },
                 body: JSON.stringify({ username, password }),
             });
-            console.log(response)
             if (response.ok) {
                 const data = await response.json();
 
-                console.log(data)
                 const jwtToken = data.token;
 
                 localStorage.setItem('jwtToken', jwtToken);

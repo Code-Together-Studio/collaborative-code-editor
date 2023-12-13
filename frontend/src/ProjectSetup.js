@@ -23,8 +23,6 @@ const ProjectSetup = () => {
 
             if (response.ok) {
                 const project = await response.json();
-                console.log(project)
-                // Maybe use history
                 window.location.href = `/project/${project.id}`;
             } else {
                 setError('Failed to create project. Please try again.');

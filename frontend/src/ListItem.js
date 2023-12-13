@@ -62,19 +62,6 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
         }
     };
 
-    /*
-        const handleContextMenu = (e) => {
-            e.preventDefault();
-            setShowContextMenu(true);
-            setContextMenuPosition({ x: e.pageX, y: e.pageY });
-        };
-
-        const handleCreateFolder = () => {
-            // createFolder(item.id);
-            console.log('Creating folder' + `${item.id}`)
-            setShowContextMenu(false);
-        };
-    */
     return (
         <div>
             <div className="main-list-item" style={{display:"flex", justifyContent:'space-between'}} onClick={() => {
@@ -132,9 +119,7 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                     <label htmlFor="folderName">Enter folder name:</label>
                                     <input type="text" ref={inputFolderRef} id="folderName" name="folderName"/>
                                     <button onClick={() => {
-                                        console.log("data");
                                         onCreateFolder(item.id, inputFolderRef.current.value).then((data) => {
-                                            console.log(data);
                                             setSubItems(prev => [...subItems, data].sort(
                                                 function(a,b){
                                                 let x = a.name.toLowerCase();
