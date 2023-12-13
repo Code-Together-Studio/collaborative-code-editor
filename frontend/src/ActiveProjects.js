@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import './ActiveProjects.css';
+import axiosInstance from './AxiosSetup';
 
 const Pagination = ({ itemsPerPage, totalItems, paginate }) => {
     const pageNumbers = [];
@@ -61,14 +62,8 @@ const Home = () => {
             try {
                 const jwtToken = localStorage.getItem('jwtToken');
                 const endpoint = jwtToken ? '/projects/all' : '/projects/not-required-authentication';
-                const url = `${process.env.REACT_APP_BACKEND_URL}${endpoint}`;
-                const response = await fetch(url);
-                console.log(response)
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setProjects(data);
+                const response = await axiosInstance.get(endpoint);
+                setProjects(response.data);
             } catch (error) {
                 console.error('Error fetching projects:', error);
             }

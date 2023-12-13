@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import './ProjectSetup.css';
+import axiosInstance from './AxiosSetup';
 
 const ProjectSetup = () => {
     const [projectTitle, setProjectTitle] = useState('');
@@ -15,19 +16,10 @@ const ProjectSetup = () => {
         formData.append('authenticated_only', !allowAnonymous);
 
         try {
-            console.log('Sending request')
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/projects/create`, {
-                method: 'POST',
-                body: formData
-            });
+            const response = await axiosInstance.post(`/projects/create`, formData);
 
-            if (response.ok) {
-                const project = await response.json();
-                window.location.href = `/project/${project.id}`;
-            } else {
-                setError('Failed to create project. Please try again.');
-                console.error('Failed to create project');
-            }
+            const project = response.data;
+            window.location.href = `/project/${project.id}`;
         } catch (error) {
             setError('An error occurred. Please try again.');
             console.error('Error:', error);
