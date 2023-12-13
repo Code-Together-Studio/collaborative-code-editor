@@ -4,6 +4,7 @@ import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import './Project.css';
 import ListItem from "./ListItem";
+import axiosInstance from './AxiosSetup';
 
 const Project = () => {
     const navigate = useNavigate();
@@ -35,10 +36,6 @@ const Project = () => {
             setTextareaContent(file.content);
         }
         navigate(`/project/${projectId}/file/${file.id}`);
-        
-        // const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/${fileId}/content`);
-        // const content = await response.text();
-        // setTextareaContent(content);
     }
 
 
@@ -48,11 +45,8 @@ const Project = () => {
 
     const fetchChildFolders = async (folderId) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${folderId}/child-folders`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return await response.json();
+            const response = await axiosInstance.get(`/folders/${folderId}/child-folders`);
+            return response.data;
         } catch (error) {
             console.log('Error fetching child folders:', error);
             return [];
@@ -61,11 +55,8 @@ const Project = () => {
 
     const fetchChildFiles = async (folderId) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/folder/${folderId}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return await response.json();
+            const response = await axiosInstance.get(`/code-snippet/folder/${folderId}`);
+            return response.data;
         } catch (error) {
             console.log('Error fetching child folders:', error);
             return [];
@@ -74,11 +65,8 @@ const Project = () => {
 
     const fetchFileDetails = async (fileId) => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/${fileId}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return await response.json();
+            const response = await axiosInstance.get(`/code-snippet/${fileId}`);
+            return response.data;
         } catch (error) {
             console.log('Error fetching file:', error);
             return null;
@@ -91,11 +79,8 @@ const Project = () => {
     useEffect(() => {
         const fetchRootFolders = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${projectId}/project-root-folders`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const folders = await response.json();
+                const response = await axiosInstance.get(`/folders/${projectId}/project-root-folders`);
+                const folders = await response.data;
                 setRootFolders(folders.sort(
                     function(a,b){
                         let x = a.name.toLowerCase();
@@ -117,11 +102,8 @@ const Project = () => {
     useEffect(() => {
         const fetchRootFiles = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/project/${projectId}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const files = await response.json();
+                const response = await axiosInstance.get(`/code-snippet/project/${projectId}`);
+                const files = response.data;
                 setRootFiles(files.sort(
                     function(a,b){
                         let x = a.name.toLowerCase();
@@ -152,14 +134,12 @@ const Project = () => {
     useEffect(() => {
         const fetchProject = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/projects/${projectId}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const projectData = await response.json();
+                const response = await axiosInstance.get(`/projects/${projectId}`);
+                const projectData = response.data;
                 setProject(projectData);
             } catch (error) {
                 console.log(error);
+                window.location.href = '/';
             } finally {
                 setLoading(false);
             }
@@ -204,28 +184,19 @@ const Project = () => {
     const createFolder = async (parentId, name) => {
         try {
             const formData = new FormData();
-            var url = `${process.env.REACT_APP_BACKEND_URL}/folders/create`
+            var url = `/folders/create`
             if (parentId !== null) {
                 formData.append('parentFolderId', parentId);
             }
             else {
                 formData.append('parentProjectId', projectId);
-                url = `${process.env.REACT_APP_BACKEND_URL}/folders/project/create`
+                url = `/folders/project/create`
             }
             formData.append('name', name);
 
-            const response = await fetch(url, {
-                method: 'POST',
-                body: formData
-            });
+            const response = await axiosInstance.post(url, formData);
 
-            if (response.ok) {
-                const data = await response.json()
-                console.log('Folder created successfully');
-                return(data);
-            } else {
-                console.error('Failed to create folder');
-            }
+            return(response.dat);
         } catch (error) {
             console.error('Error creating folder:', error);
         }
@@ -248,27 +219,19 @@ const Project = () => {
                 inputFolderNameRef.current.value = "";
                 labelFolderErrorRef.current.innerText = "";
 
-                const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/project/create`, {
-                    method: 'POST',
-                    body: formData
-                });
+                const response = await axiosInstance.post(`/folders/project/create`, formData);
 
-                if (response.ok) {
-                    const dataFolder = await response.json()
-                    setRootFolders(prev => [...rootFolders].sort(
-                        function(a,b){
-                            let x = a.name.toLowerCase();
-                            let y = b.name.toLowerCase();
+                const dataFolder = response.data;
+                setRootFolders(prev => [...rootFolders].sort(
+                    function(a,b){
+                        let x = a.name.toLowerCase();
+                        let y = b.name.toLowerCase();
 
-                            if(x > y){return 1;}
-                            if(x < y){return -1;}
-                            return 0;}))
-                    setRootFolders(prev => [...rootFolders, dataFolder]);
-                    console.log('Folder created successfully');
-                    return (dataFolder);
-                } else {
-                    console.error('Failed to create file');
-                }
+                        if(x > y){return 1;}
+                        if(x < y){return -1;}
+                        return 0;}))
+                setRootFolders(prev => [...rootFolders, dataFolder]);
+                return (dataFolder);
             }
         } catch (error) {
             console.error('Error creating file:', error);
@@ -282,20 +245,8 @@ const Project = () => {
             formData.append('name', name);
             inputFileNameRef.current.value = "";
 
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/project`, {
-                method: 'POST',
-                body: formData
-            });
-            if (response.ok) {
-                /*response.json().then((data)=>{
-                    setRootFiles((prev)=>[...prev, data])
-                })*/
-                const data = await response.json()
-                console.log('File created successfully');
-                return(data);
-            } else {
-                console.error('Failed to create file');
-            }
+            const response = await axiosInstance.post(`/code-snippet/project`, formData);
+            return(response.data);
         } catch (error) {
             console.error('Error creating file:', error);
         }
@@ -307,17 +258,8 @@ const Project = () => {
             formData.append('parentFolderId', parentId);
             formData.append('name', name);
 
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/folder`, {
-                method: 'POST',
-                body: formData
-            });
-            if (response.ok) {
-                const data = await response.json()
-                console.log('File created successfully');
-                return(data);
-            } else {
-                console.error('Failed to create file');
-            }
+            const response = await axiosInstance.post(`/code-snippet/folder`, formData);
+            return(response.data);
         } catch (error) {
             console.error('Error creating file:', error);
         }
@@ -327,15 +269,7 @@ const Project = () => {
         try {
             const formData = new FormData();
             formData.append('id', id);
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/code-snippet/${id}`, {
-                method: 'DELETE',
-                body: formData
-            });
-            if (response.ok) {
-                console.log('File deleted successfully');
-            } else {
-                console.error('Failed to delete file');
-            }
+            await axiosInstance.delete(`/code-snippet/${id}`, formData);
         } catch (error) {
             console.error('Error deleting file:', error);
         }
@@ -345,15 +279,7 @@ const Project = () => {
         try {
             const formData = new FormData();
             formData.append('id', id);
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/folders/${id}`, {
-                method: 'DELETE',
-                body: formData
-            });
-            if (response.ok) {
-                console.log('Folder deleted successfully');
-            } else {
-                console.error('Failed to delete folder');
-            }
+            await axiosInstance.delete(`/folders/${id}`, formData);
         } catch (error) {
             console.error('Error whilst deleting folder:', error);
         }

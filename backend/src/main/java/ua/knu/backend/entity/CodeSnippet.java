@@ -34,6 +34,9 @@ public class CodeSnippet {
 
     @Column(name = "folder_id")
     private Integer folderId;
+//
+//    @Column(name = "data_version")
+//    private Integer dataVersion;
 
     public CodeSnippet(String name, Integer folderId) {
         this.name = name;

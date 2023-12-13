@@ -34,10 +34,10 @@ public class ProjectController {
     public ProjectDto getProjectById(@PathVariable Integer id, Authentication authentication) {
         ProjectDto project = ProjectMapper.toDto(projectService.getProjectById(id));
 
-        /*if (project.isAuthenticatedOnly() && (authentication == null || !authentication.isAuthenticated())) {
+        if (project.isAuthenticatedOnly() && (authentication == null || !authentication.isAuthenticated())) {
             throw new ProjectRequiresAuthException(project.getTitle());
         }
-*/
+
         return project;
     }
 

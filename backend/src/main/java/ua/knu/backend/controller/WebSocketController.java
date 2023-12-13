@@ -17,7 +17,8 @@ public class WebSocketController {
 
     @MessageMapping("/change")
     @SendTo("/topic/updates")
-    public TextChangeDto handleTextChange(TextChangeDto dto) {
+    public TextChangeDto handleTextChange(TextChangeDto dto) throws InterruptedException {
+        //Thread.sleep(1000);
         // codeSnippetService.updateContentById(dto.getFileId(), dto.getContent());
         codeSnippetService.saveInDb(dto.getFileId(), dto.getContent());
         return dto;

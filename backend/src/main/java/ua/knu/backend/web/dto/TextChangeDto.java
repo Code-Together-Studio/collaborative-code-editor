@@ -7,5 +7,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class TextChangeDto {
     private Integer fileId;
+    private Integer originalDataVersion;
     private String content;
 }
