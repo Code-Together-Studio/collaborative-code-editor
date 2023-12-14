@@ -17,6 +17,7 @@ const Project = () => {
     const inputFileNameRef = useRef(null);
     const inputFolderNameRef = useRef(null);
     const labelFolderErrorRef = useRef(null);
+    const labelFileErrorRef = useRef(null);
     const jwtToken = localStorage.getItem('jwtToken');
     const [isClicked, setIsClicked] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -261,12 +262,22 @@ const Project = () => {
     const createFileInProject = async (name) => {
         try {
             const formData = new FormData();
+            let isExist = false;
             formData.append('parentProjectId', projectId);
             formData.append('name', name);
-            inputFileNameRef.current.value = "";
+            rootFiles.map((item) => {
+                if (item.name === name) {
+                    labelFileErrorRef.current.innerText = "file exists";
+                    isExist = true;
+                }
+            })
+            if (isExist === false) {
+                inputFileNameRef.current.value = "";
+                labelFileErrorRef.current.innerText = "";
 
-            const response = await axiosInstance.post(`/code-snippet/project`, formData);
-            return (response.data);
+                const response = await axiosInstance.post(`/code-snippet/project`, formData);
+                return (response.data);
+            }
         } catch (error) {
             console.error('Error creating file:', error);
         }
@@ -396,6 +407,7 @@ const Project = () => {
                                         <form className="file-form" onSubmit={(e) => e.preventDefault()}>
                                             <label htmlFor="name">Enter file name:</label>
                                             <input type="text" ref={inputFileNameRef} id="name" name="name" />
+                                            <label ref={labelFileErrorRef}></label>
                                             <button onClick={() => createFileInProject(inputFileNameRef.current.value).then((data) => {
                                                 setRootFiles(prev => [...rootFiles, data].sort(
                                                     function (a, b) {
