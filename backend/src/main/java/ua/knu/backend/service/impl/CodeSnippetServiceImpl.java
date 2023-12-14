@@ -1,16 +1,15 @@
 package ua.knu.backend.service.impl;
 
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.knu.backend.entity.ChangeOperation;
 import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.entity.Project;
+import ua.knu.backend.exception.codesnippet.CodeSnippetWithNameExistsException;
 import ua.knu.backend.helpers.DiffResult;
 import ua.knu.backend.helpers.Operation;
 import ua.knu.backend.repository.*;
 import ua.knu.backend.service.CodeSnippetService;
-import ua.knu.backend.web.dto.CodeSnippetDto;
 
 import java.util.Date;
 import java.util.List;
@@ -28,6 +27,7 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     private final ProjectRepository projectRepository;
 
     private final ChangeOperationRepository changeOperationRepository;
+
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 
 
@@ -137,6 +137,7 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     @Override
     public CodeSnippet createInFolder(Integer parentFolderId, String name) {
         CodeSnippet codeSnippet = new CodeSnippet(name, parentFolderId);
+        throwExceptionIfParentFolderContainsCodeSnippetWithName(codeSnippet);
         codeSnippet.setCreatedAt(new Date());
         codeSnippet.setModifiedAt(new Date());
         codeSnippet.setContent("");
@@ -153,5 +154,10 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     public void deleteById(Integer id) {
         codeSnippetRepository.deleteById(id);
         codeSnippetCashableRepository.deleteById(id);
+    }
+
+    private void throwExceptionIfParentFolderContainsCodeSnippetWithName(CodeSnippet codeSnippet) {
+        if (codeSnippetRepository.getAllByFolderId(codeSnippet.getFolderId()).stream().map(CodeSnippet::getName).anyMatch(s -> s.equals(codeSnippet.getName())))
+            throw new CodeSnippetWithNameExistsException(codeSnippet.getName());
     }
 }

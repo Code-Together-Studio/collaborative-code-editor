@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.knu.backend.entity.Folder;
 import ua.knu.backend.entity.Project;
 import ua.knu.backend.exception.folder.FolderByIdNotFoundException;
+import ua.knu.backend.exception.folder.FolderWithNameExistsException;
 import ua.knu.backend.exception.folder.HiddenRootFolderNotFoundException;
 import ua.knu.backend.exception.project.ProjectByIdNotFoundException;
-import ua.knu.backend.exception.project.ProjectWithTitleExistsException;
 import ua.knu.backend.repository.CodeSnippetRepository;
 import ua.knu.backend.repository.FolderRepository;
 import ua.knu.backend.repository.ProjectRepository;
@@ -92,6 +92,6 @@ public class FolderServiceImpl implements FolderService {
     private void throwExceptionIfParentFolderContainsFolderWithName(Folder folder, String name) {
         Hibernate.initialize(folder.getParentFolder());
         if (folder.getChildrenFolders().stream().map(Folder::getName).anyMatch(childName -> childName.equals(name)))
-            throw new ProjectWithTitleExistsException(name);
+            throw new FolderWithNameExistsException(name);
     }
 }
