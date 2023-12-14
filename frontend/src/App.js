@@ -12,10 +12,10 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Navigate replace to="/home" />} />
+                <Route path="/logout" element={<Navigate replace to="/home" />} />
                 <Route exact path="/home" element={<Home/>}/>
                 <Route exact path="/activeProjects" element={<ActiveProjects/>}/>
                 <Route exact path="/test" element={<Test/>}/>
-                <Route exact path="/logout" element={<Home/>}/>
                 <Route exact path="/login" element={<Login/>}/>
                 <Route exact path="/signup" element={<Signup/>}/>
                 <Route exact path="/projectSetup" element={<ProjectSetup/>}/>

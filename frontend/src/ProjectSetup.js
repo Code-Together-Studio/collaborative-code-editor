@@ -6,6 +6,11 @@ const ProjectSetup = () => {
     const [projectTitle, setProjectTitle] = useState('');
     const [allowAnonymous, setAllowAnonymous] = useState(false);
     const [error, setError] = useState('');
+    const jwtToken = localStorage.getItem('jwtToken');
+
+    if (!jwtToken) {
+        window.location.href = `/home`;
+    }
 
     const handleCreateProject = async (e) => {
         e.preventDefault();
