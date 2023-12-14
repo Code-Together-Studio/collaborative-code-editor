@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS change_operation
     code_snippet_id  INT,
     data_version     INT,
     operation        TEXT,
-    start_index            INT,
-    end_index              INT,
+    start_index      INT,
+    end_index        INT,
     original_content TEXT
 );
 
@@ -45,6 +45,13 @@ CREATE TABLE IF NOT EXISTS folders
     parent     INT,
     created_at TIMESTAMP DEFAULT NOW(),
     FOREIGN KEY (parent) REFERENCES folders (id)
+);
+
+CREATE TABLE IF NOT EXISTS file_locks
+(
+    id              SERIAL PRIMARY KEY,
+    file_id         INT NOT NULL,
+    user_session_id VARCHAR(255) NOT NULL
 );
 
 -- INSERTS  --
