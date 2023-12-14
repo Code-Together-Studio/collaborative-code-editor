@@ -1,10 +1,12 @@
 import React, {useRef, useState} from "react";
+import axiosInstance from "./AxiosSetup";
 
-const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, onCreateFile, deleteFile, deleteFolder, fileSelect }) => {
+const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, onCreateFile, deleteFile, deleteFolder, fileSelect, labelFileExist, rootFiles }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [subItems, setSubItems] = useState([]);
     const inputFileRef = useRef(null);
     const inputFolderRef = useRef(null);
+    const labelFileErrorRef = useRef(null);
 
     /*
         const [showContextMenu, setShowContextMenu] = useState(false);
@@ -33,6 +35,41 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
              console.error('Error during signup:', error);
          }
      };*/
+
+    const createFileInFolder = async (parentId, name) => {
+        try {
+            const formData = new FormData();
+            let isExist = false;
+            formData.append('parentFolderId', parentId);
+            formData.append('name', name);
+
+            subItems.map((item) => {
+                if (item.content !== undefined && item.name === name) {
+                    labelFileErrorRef.current.innerText = "file exists";
+                    isExist = true;
+                }
+            })
+
+            if (isExist === false) {
+                labelFileErrorRef.current.innerText = "";
+                const response = await axiosInstance.post(`/code-snippet/folder`, formData);
+                setSubItems(() => [...subItems, response.data].sort(
+                    function(a,b){
+                        let x = a.name.toLowerCase();
+                        let y = b.name.toLowerCase();
+
+                        if(x > y){return 1;}
+                        if(x < y){return -1;}
+                        return 0;})
+                    .sort((a) =>  a.content !== undefined ? 1 : -1));
+                inputFileRef.current.value = "";
+                return (response.data);
+            }
+
+        } catch (error) {
+            console.error('Error creating file:', error);
+        }
+    };
 
 
 
@@ -94,19 +131,9 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                 <form className="file-form" onSubmit={(e) => e.preventDefault()}>
                                     <label htmlFor="fileName">Enter file name:</label>
                                     <input type="text" ref={inputFileRef} id="fileName" name="fileName"/>
+                                    <label ref={labelFileErrorRef}></label>
                                     <button onClick={() => {
-                                        onCreateFile(item.id, inputFileRef.current.value).then((data) => {
-                                            setSubItems(() => [...subItems, data].sort(
-                                                function(a,b){
-                                                    let x = a.name.toLowerCase();
-                                                    let y = b.name.toLowerCase();
-
-                                                    if(x > y){return 1;}
-                                                    if(x < y){return -1;}
-                                                    return 0;})
-                                                .sort((a) =>  a.content !== undefined ? 1 : -1));
-                                            inputFileRef.current.value = "";
-                                    })}} >
+                                        createFileInFolder(item.id, inputFileRef.current.value)}} >
                                         Submit
                                     </button>
                                 </form>
@@ -162,6 +189,8 @@ const ListItem = ({ item, fetchChildFolders, onCreateFolder, fetchChildFiles, on
                                       deleteFile={deleteFile}
                                       deleteFolder={deleteFolder}
                                       fileSelect={fileSelect}
+                                      labelFileExist = {labelFileExist}
+                                      rootFiles={rootFiles}
                             />
                         </li>
                     ))}

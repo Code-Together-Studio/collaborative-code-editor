@@ -17,6 +17,7 @@ const Project = () => {
     const inputFileNameRef = useRef(null);
     const inputFolderNameRef = useRef(null);
     const labelFolderErrorRef = useRef(null);
+    const labelFileErrorRef = useRef(null);
     const jwtToken = localStorage.getItem('jwtToken');
     const [isClicked, setIsClicked] = useState(true);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -261,12 +262,32 @@ const Project = () => {
     const createFileInProject = async (name) => {
         try {
             const formData = new FormData();
+            let isExist = false;
             formData.append('parentProjectId', projectId);
             formData.append('name', name);
-            inputFileNameRef.current.value = "";
+            rootFiles.map((item) => {
+                if (item.name === name) {
+                    labelFileErrorRef.current.innerText = "file exists";
+                    isExist = true;
+                }
+            })
+            if (isExist === false) {
+                inputFileNameRef.current.value = "";
+                labelFileErrorRef.current.innerText = "";
+                const response = await axiosInstance.post(`/code-snippet/project`, formData);
 
-            const response = await axiosInstance.post(`/code-snippet/project`, formData);
-            return (response.data);
+                setRootFiles(prev => [...rootFiles, response.data].sort(
+                    function (a, b) {
+                        let x = a.name.toLowerCase();
+                        let y = b.name.toLowerCase();
+
+                        if (x > y) { return 1; }
+                        if (x < y) { return -1; }
+                        return 0;
+                    }));
+
+                return (response.data);
+            }
         } catch (error) {
             console.error('Error creating file:', error);
         }
@@ -275,11 +296,23 @@ const Project = () => {
     const createFileInFolder = async (parentId, name) => {
         try {
             const formData = new FormData();
+            let isExist = false;
             formData.append('parentFolderId', parentId);
             formData.append('name', name);
 
-            const response = await axiosInstance.post(`/code-snippet/folder`, formData);
-            return (response.data);
+            rootFiles.map((item) => {
+                if (item.name === name) {
+                    labelFileErrorRef.current.innerText = "file exists";
+                    isExist = true;
+                }
+            })
+
+            if (isExist === false) {
+                labelFileErrorRef.current.innerText = "";
+                const response = await axiosInstance.post(`/code-snippet/folder`, formData);
+                return (response.data);
+            }
+
         } catch (error) {
             console.error('Error creating file:', error);
         }
@@ -314,6 +347,7 @@ const Project = () => {
             deleteFile={deleteFile}
             deleteFolder={deleteFolder}
             fileSelect={fileSelect}
+            labelFileExist={labelFileErrorRef}
         />
     )), [rootFiles]);
 
@@ -396,18 +430,8 @@ const Project = () => {
                                         <form className="file-form" onSubmit={(e) => e.preventDefault()}>
                                             <label htmlFor="name">Enter file name:</label>
                                             <input type="text" ref={inputFileNameRef} id="name" name="name" />
-                                            <button onClick={() => createFileInProject(inputFileNameRef.current.value).then((data) => {
-                                                setRootFiles(prev => [...rootFiles, data].sort(
-                                                    function (a, b) {
-                                                        let x = a.name.toLowerCase();
-                                                        let y = b.name.toLowerCase();
-
-                                                        if (x > y) { return 1; }
-                                                        if (x < y) { return -1; }
-                                                        return 0;
-                                                    }));
-                                                inputFileNameRef.current.value = "";
-                                            })}>
+                                            <label ref={labelFileErrorRef}></label>
+                                            <button onClick={() => createFileInProject(inputFileNameRef.current.value)}>
                                                 Submit
                                             </button>
                                         </form>
@@ -438,6 +462,7 @@ const Project = () => {
                             deleteFile={deleteFile}
                             deleteFolder={deleteFolder}
                             fileSelect={fileSelect}
+                            rootFiles={rootFiles}
                         />
                     ))}
                 </div>
