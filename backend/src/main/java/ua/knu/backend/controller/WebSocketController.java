@@ -20,7 +20,6 @@ public class WebSocketController {
     @MessageMapping("/change")
     @SendTo("/topic/updates")
     public TextChangeDto handleTextChange(TextChangeDto dto) throws InterruptedException {
-        //Thread.sleep(1000);
         // codeSnippetService.updateContentById(dto.getFileId(), dto.getContent());
         String originalContent = codeSnippetService.getContentByIdAndDataVersion(dto.getFileId(), dto.getOriginalDataVersion());
         var codeSnippet = codeSnippetService.getCodeSnippetById(dto.getFileId());
@@ -29,7 +28,20 @@ public class WebSocketController {
         }
 
         DiffResult diffResult = DiffService.findDiffIndexes(originalContent, dto.getContent());
-        codeSnippetService.saveInDb(dto.getFileId(), dto.getContent(), diffResult);
+
+        var diffResultNew = codeSnippetService.getNewDiffResult(dto.getFileId(), dto.getOriginalDataVersion(), diffResult);
+
+        if (diffResultNew == null) {
+            codeSnippetService.saveInDb(dto.getFileId(), dto.getContent(), diffResult);
+        }
+        else {
+            StringBuilder builder = new StringBuilder(codeSnippet.getContent());
+            String newChar = dto.getContent().charAt(diffResult.getStartIndex()) + "";
+            builder.insert(diffResultNew.getStartIndex(), newChar);
+            codeSnippetService.saveInDb(dto.getFileId(), builder.toString(), diffResultNew);
+            dto.setContent(builder.toString());
+
+        }
         dto.setOriginalDataVersion(codeSnippet.getDataVersion() + 1);
         return dto;
     }

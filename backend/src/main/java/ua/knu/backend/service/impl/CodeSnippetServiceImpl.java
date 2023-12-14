@@ -1,11 +1,13 @@
 package ua.knu.backend.service.impl;
 
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.knu.backend.entity.ChangeOperation;
 import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.entity.Project;
 import ua.knu.backend.helpers.DiffResult;
+import ua.knu.backend.helpers.Operation;
 import ua.knu.backend.repository.*;
 import ua.knu.backend.service.CodeSnippetService;
 import ua.knu.backend.web.dto.CodeSnippetDto;
@@ -55,6 +57,40 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
         }
 
         return changeOperation.getOriginalContent();
+    }
+
+    @Override
+    public DiffResult getNewDiffResult(Integer id, Integer dataVersion, DiffResult diffResult) {
+        var changeOperations = changeOperationRepository.findByCodeSnippetIdAndDataVersionGreaterThanEqual(id, dataVersion);
+
+        if (changeOperations.isEmpty()) {
+            return null;
+        }
+
+        if (diffResult.getOperation().equals(Operation.INSERT)) {
+            int insertPosition = diffResult.getStartIndex();
+
+            for (ChangeOperation operation : changeOperations) {
+                if (operation.getOperation().equals(Operation.DELETE)) {
+                    if (insertPosition >= operation.getStart() && insertPosition <= operation.getEnd()) {
+                        insertPosition = operation.getStart();
+                    } else if (insertPosition > operation.getEnd()) {
+                        insertPosition -= (operation.getEnd() - operation.getStart() + 1);
+                    }
+                }
+                else if (operation.getOperation().equals(Operation.REPLACE)) {
+                    if (insertPosition >= operation.getStart() && insertPosition <= operation.getEnd()) {
+                        insertPosition = operation.getStart();
+                    } else if (insertPosition > operation.getEnd()) {
+                        insertPosition -= (operation.getEnd() - operation.getStart());
+                    }
+                }
+            }
+
+            return new DiffResult(insertPosition, insertPosition, Operation.INSERT);
+        }
+
+        return null;
     }
 
     @Override

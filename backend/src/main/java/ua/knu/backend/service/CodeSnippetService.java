@@ -1,5 +1,6 @@
 package ua.knu.backend.service;
 
+import org.springframework.data.util.Pair;
 import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.helpers.DiffResult;
 
@@ -9,6 +10,7 @@ public interface CodeSnippetService {
 
     String getContentById(Integer id);
     String getContentByIdAndDataVersion(Integer id, Integer dataVersion);
+    DiffResult getNewDiffResult(Integer id, Integer dataVersion, DiffResult diffResult);
 
     CodeSnippet getCodeSnippetById(Integer id);
 
