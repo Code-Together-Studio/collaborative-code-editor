@@ -1,10 +1,12 @@
 package ua.knu.backend.service.impl.auth;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.knu.backend.exception.UserExistsException;
 import ua.knu.backend.web.security.JwtAuthenticationResponse;
 import ua.knu.backend.web.security.RefreshTokenRequest;
 import ua.knu.backend.web.security.SignInRequest;
@@ -24,7 +26,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
 
+    @SneakyThrows
     public User signUp(SignUpRequest signUpRequest){
+
+        //check if user with this username exists
+        if(userRepository.findByUsername(signUpRequest.getUsername()).isPresent()){
+            throw new UserExistsException(signUpRequest.getUsername());
+        }
+
         User user = new User();
         user.setUsername(signUpRequest.getUsername());
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
