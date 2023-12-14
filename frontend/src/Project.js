@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo, useRef} from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
@@ -23,7 +23,7 @@ const Project = () => {
 
     const [textareaContent, setTextareaContent] = useState(null);
     const textareaRef = useRef(null);
-    const cursorPositionRef = useRef(null); 
+    const cursorPositionRef = useRef(null);
     const [dataVersion, setDataVersion] = useState(0);
     const [stompClient, setStompClient] = useState(null);
 
@@ -74,7 +74,7 @@ const Project = () => {
             console.log('Error fetching file:', error);
             return null;
         }
-        finally{
+        finally {
             setLoading(false);
         }
     };
@@ -85,13 +85,14 @@ const Project = () => {
                 const response = await axiosInstance.get(`/folders/${projectId}/project-root-folders`);
                 const folders = await response.data;
                 setRootFolders(folders.sort(
-                    function(a,b){
+                    function (a, b) {
                         let x = a.name.toLowerCase();
                         let y = b.name.toLowerCase();
 
-                        if(x>y){return 1;}
-                        if(x<y){return -1;}
-                        return 0;}));
+                        if (x > y) { return 1; }
+                        if (x < y) { return -1; }
+                        return 0;
+                    }));
             } catch (error) {
                 console.log('Error fetching project root folders:', error);
             } finally {
@@ -114,13 +115,14 @@ const Project = () => {
                 const response = await axiosInstance.get(`/code-snippet/project/${projectId}`);
                 const files = response.data;
                 setRootFiles(files.sort(
-                    function(a,b){
+                    function (a, b) {
                         let x = a.name.toLowerCase();
                         let y = b.name.toLowerCase();
 
-                        if(x>y){return 1;}
-                        if(x<y){return -1;}
-                        return 0;}));
+                        if (x > y) { return 1; }
+                        if (x < y) { return -1; }
+                        return 0;
+                    }));
             } catch (error) {
                 console.log('Error fetching project root files:', error);
             } finally {
@@ -213,7 +215,7 @@ const Project = () => {
 
             const response = await axiosInstance.post(url, formData);
 
-            return(response.dat);
+            return (response.dat);
         } catch (error) {
             console.error('Error creating folder:', error);
         }
@@ -227,12 +229,12 @@ const Project = () => {
             formData.append('parentProjectId', projectId);
             formData.append('name', name);
             rootFolders.map((item) => {
-                if(item.name === name) {
-                    labelFolderErrorRef.current.innerText  = "folder exists";
+                if (item.name === name) {
+                    labelFolderErrorRef.current.innerText = "folder exists";
                     isExist = true;
                 }
             })
-            if(isExist === false) {
+            if (isExist === false) {
                 inputFolderNameRef.current.value = "";
                 labelFolderErrorRef.current.innerText = "";
 
@@ -240,13 +242,14 @@ const Project = () => {
 
                 const dataFolder = response.data;
                 setRootFolders(prev => [...rootFolders].sort(
-                    function(a,b){
+                    function (a, b) {
                         let x = a.name.toLowerCase();
                         let y = b.name.toLowerCase();
 
-                        if(x > y){return 1;}
-                        if(x < y){return -1;}
-                        return 0;}))
+                        if (x > y) { return 1; }
+                        if (x < y) { return -1; }
+                        return 0;
+                    }))
                 setRootFolders(prev => [...rootFolders, dataFolder]);
                 return (dataFolder);
             }
@@ -254,7 +257,7 @@ const Project = () => {
             console.error('Error creating file:', error);
         }
     };
-  
+
     const createFileInProject = async (name) => {
         try {
             const formData = new FormData();
@@ -263,7 +266,7 @@ const Project = () => {
             inputFileNameRef.current.value = "";
 
             const response = await axiosInstance.post(`/code-snippet/project`, formData);
-            return(response.data);
+            return (response.data);
         } catch (error) {
             console.error('Error creating file:', error);
         }
@@ -276,7 +279,7 @@ const Project = () => {
             formData.append('name', name);
 
             const response = await axiosInstance.post(`/code-snippet/folder`, formData);
-            return(response.data);
+            return (response.data);
         } catch (error) {
             console.error('Error creating file:', error);
         }
@@ -304,13 +307,13 @@ const Project = () => {
 
     const rootFilesView = useMemo(() => rootFiles.map((item, index) => (
         <ListItem key={index} item={item}
-                  fetchChildFolders={fetchChildFolders}
-                  onCreateFolder={createFolder}
-                  fetchChildFiles={fetchChildFiles}
-                  onCreateFile={createFileInFolder}
-                  deleteFile={deleteFile}
-                  deleteFolder={deleteFolder}
-                  fileSelect={fileSelect}
+            fetchChildFolders={fetchChildFolders}
+            onCreateFolder={createFolder}
+            fetchChildFiles={fetchChildFiles}
+            onCreateFile={createFileInFolder}
+            deleteFile={deleteFile}
+            deleteFolder={deleteFolder}
+            fileSelect={fileSelect}
         />
     )), [rootFiles]);
 
@@ -331,6 +334,28 @@ const Project = () => {
             stompClient.publish({ destination: '/app/change', body: message });
         }
     };
+    // useEffect(() => {
+    //     return () => {
+    //         axiosInstance.put(`/code-snippet/${fileId}/unlock`)
+    //     };
+    //   }, [navigate]); 
+
+    // useEffect(() => {
+    //     const handleBeforeUnload = async (e) => {
+    //         try {
+    //             console.log("here")
+    //             await axiosInstance.put(`/code-snippet/${fileId}/unlock`);
+    //         } catch (error) {
+    //             console.error("Error during beforeunload Axios request", error);
+    //         }
+    //     };
+
+    //     window.addEventListener('beforeunload', handleBeforeUnload);
+
+    //     return () => {
+    //         window.removeEventListener('beforeunload', handleBeforeUnload);
+    //     };
+    // }, []);
 
     return (
         <div className="app">
@@ -338,8 +363,8 @@ const Project = () => {
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <div className="icon-container">
 
-                        <img className="icon" style={{height: "35px", width:"auto"}} src="/menu.png" alt="icon" onClick={handleChange}/>
-                        <img className="icon" src="/logo.png" alt="icon"/>
+                        <img className="icon" style={{ height: "35px", width: "auto" }} src="/menu.png" alt="icon" onClick={handleChange} />
+                        <img className="icon" src="/logo.png" alt="icon" />
 
                     </div>
                     <a href="/home" className="siteName">CodeTogether</a>
@@ -360,7 +385,7 @@ const Project = () => {
             </div>
             <div className="main-content">
                 <div className={leftBlockClassName}>
-                    <div style={{display:"flex", justifyContent:"space-between"}}>
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <h1 className="siteName">{project ? project.title : 'Project'}</h1>
                         <div className="dropdown">
                             <button className="create-folder-button">⋮</button>
@@ -373,13 +398,14 @@ const Project = () => {
                                             <input type="text" ref={inputFileNameRef} id="name" name="name" />
                                             <button onClick={() => createFileInProject(inputFileNameRef.current.value).then((data) => {
                                                 setRootFiles(prev => [...rootFiles, data].sort(
-                                                    function(a,b){
+                                                    function (a, b) {
                                                         let x = a.name.toLowerCase();
                                                         let y = b.name.toLowerCase();
 
-                                                        if(x > y){return 1;}
-                                                        if(x < y){return -1;}
-                                                        return 0;}));
+                                                        if (x > y) { return 1; }
+                                                        if (x < y) { return -1; }
+                                                        return 0;
+                                                    }));
                                                 inputFileNameRef.current.value = "";
                                             })}>
                                                 Submit
@@ -405,13 +431,13 @@ const Project = () => {
                     </div>
                     {rootFolders.concat(rootFiles).map((item, index) => (
                         <ListItem key={index} item={item}
-                                  fetchChildFolders={fetchChildFolders}
-                                  onCreateFolder={createFolder}
-                                  fetchChildFiles={fetchChildFiles}
-                                  onCreateFile={createFileInFolder}
-                                  deleteFile={deleteFile}
-                                  deleteFolder={deleteFolder}
-                                  fileSelect={fileSelect}
+                            fetchChildFolders={fetchChildFolders}
+                            onCreateFolder={createFolder}
+                            fetchChildFiles={fetchChildFiles}
+                            onCreateFile={createFileInFolder}
+                            deleteFile={deleteFile}
+                            deleteFolder={deleteFolder}
+                            fileSelect={fileSelect}
                         />
                     ))}
                 </div>

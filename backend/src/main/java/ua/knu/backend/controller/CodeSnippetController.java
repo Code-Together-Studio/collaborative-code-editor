@@ -1,7 +1,9 @@
 package ua.knu.backend.controller;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ua.knu.backend.service.CodeSnippetService;
+import ua.knu.backend.service.FileLockService;
 import ua.knu.backend.web.dto.CodeSnippetDto;
 import ua.knu.backend.web.dto.ContentDto;
 import ua.knu.backend.web.mapper.CodeSnippetMapper;
@@ -16,9 +18,11 @@ import java.util.stream.Collectors;
 public class CodeSnippetController {
 
     private final CodeSnippetService codeSnippetService;
+    private final FileLockService fileLockService;
 
-    public CodeSnippetController(CodeSnippetService codeSnippetService) {
+    public CodeSnippetController(CodeSnippetService codeSnippetService, FileLockService fileLockService) {
         this.codeSnippetService = codeSnippetService;
+        this.fileLockService = fileLockService;
     }
 
     @GetMapping("/{id}/content")
@@ -27,7 +31,9 @@ public class CodeSnippetController {
     }
 
     @GetMapping("/{id}")
-    public CodeSnippetDto getCodeSnippedById(@PathVariable("id") Integer id) {
+    @Transactional
+    public CodeSnippetDto getCodeSnippedById(@PathVariable("id") Integer id, @RequestHeader("X-Session-ID") String sessionId) {
+        fileLockService.Lock(id, sessionId);
         return CodeSnippetMapper.toDto(codeSnippetService.getCodeSnippetById(id));
     }
 
@@ -62,7 +68,15 @@ public class CodeSnippetController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable("id") Integer id) {
+    public void deleteById(@PathVariable("id") Integer id, @RequestHeader("X-Session-ID") String sessionId) {
+        if (fileLockService.AnyOtherLocks(id, sessionId)) {
+            throw new IllegalStateException();
+        }
         codeSnippetService.deleteById(id);
+    }
+
+    @PutMapping("/{id}/unlock")
+    public void unlockById(@PathVariable("id") Integer id, @RequestHeader("X-Session-ID") String sessionId) {
+        fileLockService.Unlock(id, sessionId);
     }
 }

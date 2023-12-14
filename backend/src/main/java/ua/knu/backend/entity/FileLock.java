@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @RequiredArgsConstructor
 @AllArgsConstructor
-@Entity(name = "File_Lock")
+@Entity(name = "File_Locks")
 public class FileLock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,5 +19,5 @@ public class FileLock {
     private Integer fileId;
 
     @Column(name = "user_session_id")
-    private Integer userSessionId;
+    private String userSessionId;
 }

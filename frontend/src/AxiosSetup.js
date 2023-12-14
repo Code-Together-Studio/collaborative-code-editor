@@ -1,7 +1,11 @@
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+
+const sessionId = uuidv4(); 
 
 const axiosInstance = axios.create({
-    baseURL: process.env.REACT_APP_BACKEND_URL
+    baseURL: process.env.REACT_APP_BACKEND_URL,
+    headers: {'X-Session-ID': sessionId}
 });
 
 const isTokenExpired = (token) => {
