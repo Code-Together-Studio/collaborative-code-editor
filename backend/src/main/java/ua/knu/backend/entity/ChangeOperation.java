@@ -24,9 +24,12 @@ public class ChangeOperation {
     @Column(name = "operation")
     private String operation;
 
-    @Column(name = "start")
+    @Column(name = "start_index")
     private Integer start;
 
-    @Column(name = "end")
+    @Column(name = "end_index")
     private Integer end;
+
+    @Column(name = "original_content")
+    private String originalContent;
 }

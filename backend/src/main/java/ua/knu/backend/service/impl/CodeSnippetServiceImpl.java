@@ -1,12 +1,12 @@
 package ua.knu.backend.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ua.knu.backend.entity.ChangeOperation;
 import ua.knu.backend.entity.CodeSnippet;
 import ua.knu.backend.entity.Project;
-import ua.knu.backend.repository.CodeSnippetCashableRepository;
-import ua.knu.backend.repository.CodeSnippetRepository;
-import ua.knu.backend.repository.FolderRepository;
-import ua.knu.backend.repository.ProjectRepository;
+import ua.knu.backend.helpers.DiffResult;
+import ua.knu.backend.repository.*;
 import ua.knu.backend.service.CodeSnippetService;
 import ua.knu.backend.web.dto.CodeSnippetDto;
 
@@ -24,13 +24,16 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     private final CodeSnippetCashableRepository codeSnippetCashableRepository;
 
     private final ProjectRepository projectRepository;
+
+    private final ChangeOperationRepository changeOperationRepository;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(3);
 
 
-    public CodeSnippetServiceImpl(CodeSnippetRepository codeSnippetRepository, FolderRepository folderRepository, CodeSnippetCashableRepository codeSnippetCashableRepository, ProjectRepository projectRepository) {
+    public CodeSnippetServiceImpl(CodeSnippetRepository codeSnippetRepository, CodeSnippetCashableRepository codeSnippetCashableRepository, ProjectRepository projectRepository, ChangeOperationRepository changeOperationRepository) {
         this.codeSnippetRepository = codeSnippetRepository;
         this.codeSnippetCashableRepository = codeSnippetCashableRepository;
         this.projectRepository = projectRepository;
+        this.changeOperationRepository = changeOperationRepository;
     }
 
     @Override
@@ -41,6 +44,17 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     @Override
     public CodeSnippet getCodeSnippetById(Integer id) {
         return codeSnippetRepository.findById(id).get();
+    }
+
+
+    @Override
+    public String getContentByIdAndDataVersion(Integer id, Integer dataVersion) {
+        var changeOperation =  changeOperationRepository.findByCodeSnippetIdAndDataVersion(id, dataVersion);
+        if (changeOperation == null) {
+            return null;
+        }
+
+        return changeOperation.getOriginalContent();
     }
 
     @Override
@@ -61,22 +75,27 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     }
 
     @Override
-    public void saveInDb(Integer id, String content) {
+    @Transactional
+    public void saveInDb(Integer id, String content, DiffResult diff) {
         CodeSnippet codeSnippet = codeSnippetRepository.findById(id).get();
+        Integer dataVersion = codeSnippet.getDataVersion();
+        ChangeOperation changeOperation = new ChangeOperation(0, id, dataVersion, diff.getOperation(), diff.getStartIndex(), diff.getEndIndex(), codeSnippet.getContent());
         if (content == null) {
             String cacheContent = codeSnippetCashableRepository.getContentById(id);
             codeSnippet.setContent(cacheContent);
         }
         else {
             codeSnippet.setContent(content);
+            codeSnippet.setDataVersion(dataVersion + 1);
         }
         codeSnippet.setModifiedAt(new Date());
         codeSnippetRepository.save(codeSnippet);
+        changeOperationRepository.save(changeOperation);
     }
 
 
     public void scheduleSaveInDb(Integer id) {
-        scheduler.schedule(() -> saveInDb(id, null), 10, TimeUnit.MINUTES);
+        scheduler.schedule(() -> saveInDb(id, null, null), 10, TimeUnit.MINUTES);
     }
 
     @Override

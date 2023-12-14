@@ -22,7 +22,20 @@ CREATE TABLE IF NOT EXISTS code_snippet
     content     TEXT,
     created_at  TIMESTAMP DEFAULT NOW(),
     modified_at TIMESTAMP DEFAULT NOW(),
-    folder_id   INT
+    folder_id   INT,
+    data_version INT
+);
+
+
+CREATE TABLE IF NOT EXISTS change_operation
+(
+    id               SERIAL PRIMARY KEY,
+    code_snippet_id  INT,
+    data_version     INT,
+    operation        TEXT,
+    start_index            INT,
+    end_index              INT,
+    original_content TEXT
 );
 
 CREATE TABLE IF NOT EXISTS folders

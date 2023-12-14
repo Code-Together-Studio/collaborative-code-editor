@@ -2,6 +2,7 @@ package ua.knu.backend.service.impl;
 
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.knu.backend.entity.Folder;
 import ua.knu.backend.entity.Project;
 import ua.knu.backend.exception.folder.FolderByIdNotFoundException;
@@ -59,6 +60,7 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
+    @Transactional
     public Folder deleteFolder(Integer id) {
         Folder currentFolder = getFolderById(id);
         codeSnippetRepository.deleteAllByFolderId(id);

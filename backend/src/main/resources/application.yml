@@ -3,6 +3,11 @@ spring:
     url: jdbc:postgresql://dpg-clrv15sm7d1c73f5m130-a.frankfurt-postgres.render.com:5432/editor_kgno
     username: editor_kgno_user
     password: KrrwqL0WBv4b6bYiwiuSQIPai0sFQjja
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   data:
     redis:
       port: 6379

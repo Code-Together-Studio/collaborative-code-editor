@@ -12,6 +12,7 @@ public class CodeSnippetDto {
     private String name;
     private String content;
     private Integer folderId;
+    private Integer dataVersion;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

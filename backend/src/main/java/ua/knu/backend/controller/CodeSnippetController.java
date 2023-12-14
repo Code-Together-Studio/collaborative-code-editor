@@ -48,7 +48,7 @@ public class CodeSnippetController {
 
     @PostMapping("/{id}")
     public void saveInDb(@PathVariable("id") Integer id, @RequestBody String content) {
-        codeSnippetService.saveInDb(id, content);
+        codeSnippetService.saveInDb(id, content, null);
     }
 
     @PostMapping("/folder")

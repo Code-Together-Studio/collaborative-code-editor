@@ -15,6 +15,7 @@ public class CodeSnippetMapper {
                 codeSnippet.getName(),
                 codeSnippet.getContent(),
                 codeSnippet.getFolderId(),
+                codeSnippet.getDataVersion(),
                 codeSnippet.getCreatedAt().toInstant().atZone(ZoneId.systemDefault())
                         .toLocalDateTime(),
                 codeSnippet.getModifiedAt().toInstant().atZone(ZoneId.systemDefault())

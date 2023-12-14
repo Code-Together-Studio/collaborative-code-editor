@@ -22,6 +22,9 @@ const Project = () => {
     const [selectedFile, setSelectedFile] = useState(null);
 
     const [textareaContent, setTextareaContent] = useState(null);
+    const textareaRef = useRef(null);
+    const cursorPositionRef = useRef(null); 
+    const [dataVersion, setDataVersion] = useState(0);
     const [stompClient, setStompClient] = useState(null);
 
 
@@ -100,6 +103,12 @@ const Project = () => {
     }, [projectId]);
 
     useEffect(() => {
+        if (selectedFile) {
+            setDataVersion(selectedFile.dataVersion);
+        }
+    }, [selectedFile]);
+
+    useEffect(() => {
         const fetchRootFiles = async () => {
             try {
                 const response = await axiosInstance.get(`/code-snippet/project/${projectId}`);
@@ -162,6 +171,7 @@ const Project = () => {
                         id = +selectedFile.id
                     }
                     if (parsedMessage.fileId && parsedMessage.fileId === id) {
+                        setDataVersion(parsedMessage.originalDataVersion);
                         setTextareaContent(parsedMessage.content);
                         setLoading(false);
                     }
@@ -179,6 +189,13 @@ const Project = () => {
             client.deactivate();
         };
     }, []);
+
+    useEffect(() => {
+        if (textareaRef.current && cursorPositionRef.current !== null) {
+            textareaRef.current.selectionStart = cursorPositionRef.current;
+            textareaRef.current.selectionEnd = cursorPositionRef.current;
+        }
+    }, [textareaContent]);
 
 
     const createFolder = async (parentId, name) => {
@@ -307,9 +324,10 @@ const Project = () => {
 
         setLoading(true);
         const content = event.target.value;
+        cursorPositionRef.current = event.target.selectionStart;
 
         if (stompClient && stompClient.connected) {
-            const message = JSON.stringify({ fileId: fileId, content: content });
+            const message = JSON.stringify({ fileId: fileId, originalDataVersion: dataVersion, content: content });
             stompClient.publish({ destination: '/app/change', body: message });
         }
     };
@@ -399,7 +417,7 @@ const Project = () => {
                 </div>
                 <div className="main-right-block">
                     {textareaContent !== null ? (
-                        <textarea className="main-textarea" value={textareaContent} onChange={handleTextareaChange}></textarea>
+                        <textarea className="main-textarea" value={textareaContent} onChange={handleTextareaChange} ref={textareaRef}></textarea>
                     ) : (
                         <textarea className="main-textarea" disabled placeholder="Select a file to view/edit its content"></textarea>
                     )}
