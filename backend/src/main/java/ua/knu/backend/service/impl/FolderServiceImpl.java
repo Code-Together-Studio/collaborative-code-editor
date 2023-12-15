@@ -10,6 +10,7 @@ import ua.knu.backend.exception.folder.FolderWithNameExistsException;
 import ua.knu.backend.exception.folder.HiddenRootFolderNotFoundException;
 import ua.knu.backend.exception.project.ProjectByIdNotFoundException;
 import ua.knu.backend.repository.CodeSnippetRepository;
+import ua.knu.backend.repository.FileLockRepository;
 import ua.knu.backend.repository.FolderRepository;
 import ua.knu.backend.repository.ProjectRepository;
 import ua.knu.backend.service.FolderService;
@@ -24,11 +25,13 @@ public class FolderServiceImpl implements FolderService {
     private final ProjectRepository projectRepository;
 
     private final CodeSnippetRepository codeSnippetRepository;
+    private final FileLockRepository fileLockRepository;
 
-    public FolderServiceImpl(FolderRepository folderRepository, ProjectRepository projectRepository, CodeSnippetRepository codeSnippetRepository) {
+    public FolderServiceImpl(FolderRepository folderRepository, ProjectRepository projectRepository, CodeSnippetRepository codeSnippetRepository, FileLockRepository fileLockRepository) {
         this.folderRepository = folderRepository;
         this.projectRepository = projectRepository;
         this.codeSnippetRepository = codeSnippetRepository;
+        this.fileLockRepository = fileLockRepository;
     }
 
     @Override
@@ -63,11 +66,23 @@ public class FolderServiceImpl implements FolderService {
     @Transactional
     public Folder deleteFolder(Integer id) {
         Folder currentFolder = getFolderById(id);
+        throwWhenAnyFileLocked(currentFolder);
         codeSnippetRepository.deleteAllByFolderId(id);
         Hibernate.initialize(currentFolder);
         currentFolder.getChildrenFolders().stream().map(Folder::getId).forEach(this::deleteFolder);
-        folderRepository.deleteById(currentFolder.getId());
+        folderRepository.deleteById(id);
         return currentFolder;
+    }
+
+    private void throwWhenAnyFileLocked(Folder currentFolder) {
+        var files = codeSnippetRepository.getAllByFolderId(currentFolder.getId());
+        for (var file: files) {
+            var res = fileLockRepository.getAllByFileIdAndUserSessionIdNot(file.getId(), "");
+            if (!res.isEmpty()) {
+                throw new IllegalStateException();
+            }
+        }
+        currentFolder.getChildrenFolders().stream().forEach(this::throwWhenAnyFileLocked);
     }
 
     @Override

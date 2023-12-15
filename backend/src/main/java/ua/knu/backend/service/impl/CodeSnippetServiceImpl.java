@@ -153,7 +153,7 @@ public class CodeSnippetServiceImpl implements CodeSnippetService {
     @Override
     public void deleteById(Integer id) {
         codeSnippetRepository.deleteById(id);
-        codeSnippetCashableRepository.deleteById(id);
+        // codeSnippetCashableRepository.deleteById(id);
     }
 
     private void throwExceptionIfParentFolderContainsCodeSnippetWithName(CodeSnippet codeSnippet) {

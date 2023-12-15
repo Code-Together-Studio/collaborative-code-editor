@@ -157,13 +157,13 @@ const ListItem = ({ axiosInstance, item, fetchChildFolders, fetchChildFiles, onC
                         {item?.content == null && (
                             <a onClick={() => deleteFolder(item?.id)
                                 .then((data) => alert(`Deleted folder '${item?.name}' succesfully`))
-                                .catch((error) => alert(`Did not delete folder '${item?.name}'`))}>Delete</a>
+                                .catch((error) => alert(`Did not delete folder '${item?.name}'. File is opened`))}>Delete</a>
                         )}
                         {item?.content != null && (
                             <a onClick={(event) => {
                                 deleteFile(item?.id)
                                 .then((data) => alert(`Deleted file '${item?.name}' succesfully`))
-                                .catch((error) => alert(`Did not delete file '${item?.name}'. Someone has opened it`));
+                                .catch((error) => alert(`Did not delete file '${item?.name}'. File is opened`));
                                 
                                 event.stopPropagation();}}>
                                     Delete</a>

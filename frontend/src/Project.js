@@ -43,7 +43,7 @@ const Project = () => {
             const response = await axiosInstance.get(`/folders/${folderId}/child-folders`);
             return response.data;
         } catch (error) {
-            alert('Occured some eror. Reload page or return later');
+            alert('Occured some error. Reload page or return later');
             return [];
         }
     };
@@ -53,7 +53,7 @@ const Project = () => {
             const response = await axiosInstance.get(`/code-snippet/folder/${folderId}`);
             return response.data;
         } catch (error) {
-            alert('Occured some eror. Reload page or return later');
+            alert('Occured some error. Reload page or return later');
             return [];
         }
     };
@@ -64,6 +64,7 @@ const Project = () => {
             return response.data;
         } catch (error) {
             alert('Occured error openening file. Reload page or return later');
+            window.location.href = `/project/${projectId}`
             return null;
         }
         finally {
@@ -86,7 +87,7 @@ const Project = () => {
                         return 0;
                     }));
             } catch (error) {
-                alert('Occured some eror. Reload page or return later');
+                alert('Occured some error. Reload page or return later');
             } finally {
                 setLoading(false);
             }
@@ -116,7 +117,7 @@ const Project = () => {
                         return 0;
                     }));
             } catch (error) {
-                alert('Occured some eror. Reload page or return later');
+                alert('Occured some error. Reload page or return later');
             } finally {
                 setLoading(false);
             }
@@ -141,7 +142,7 @@ const Project = () => {
                 const projectData = response.data;
                 setProject(projectData);
             } catch (error) {
-                alert('Occured some eror. Reload page or return later');
+                alert('Occured some error. Reload page or return later');
                 window.location.href = '/';
             } finally {
                 setLoading(false);
