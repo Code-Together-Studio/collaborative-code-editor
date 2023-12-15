@@ -26,10 +26,10 @@ const Signup = () => {
             if (response.ok) {
                 window.location.href = '/login';
             } else {
-                console.error('Signup failed');
+                alert('Account with such email already exists');
             }
         } catch (error) {
-            console.error('Error during signup:', error);
+            alert('Singup failed. Please try again.');
         }
     };
 

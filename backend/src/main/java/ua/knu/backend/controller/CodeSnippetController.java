@@ -33,7 +33,6 @@ public class CodeSnippetController {
     @GetMapping("/{id}")
     @Transactional
     public CodeSnippetDto getCodeSnippedById(@PathVariable("id") Integer id, @RequestHeader("X-Session-ID") String sessionId) {
-        fileLockService.Lock(id, sessionId);
         return CodeSnippetMapper.toDto(codeSnippetService.getCodeSnippetById(id));
     }
 

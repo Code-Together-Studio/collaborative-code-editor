@@ -4,11 +4,9 @@ import './Login.css';
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [loginError, setLoginError] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setLoginError(''); // Reset login error
 
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/auth/signin`, {
@@ -27,10 +25,10 @@ const Login = () => {
 
                 window.location.href = '/home';
             } else {
-                setLoginError('Invalid email or password.');
+                alert('Invalid email or password.');
             }
         } catch (error) {
-            setLoginError('Login failed. Please try again.');
+            alert('Login failed. Please try again.');
         }
     };
 
@@ -65,7 +63,6 @@ const Login = () => {
                         />
 
                         <button type="submit" className="login-button">Log in</button>
-                        {loginError && <div className="error-message">{loginError}</div>}
                         <div className="login-text-small"> Not registered? <a href="/signup"> Sign up here </a></div>
                     </div>
                 </form>

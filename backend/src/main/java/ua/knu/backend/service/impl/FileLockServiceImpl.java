@@ -25,7 +25,17 @@ public class FileLockServiceImpl  implements FileLockService {
     @Override
     public void Unlock(Integer fileId, String sessionId) {
         var fileLock = fileLockRepository.findByFileIdAndUserSessionId(fileId, sessionId);
-        fileLockRepository.deleteById(fileLock.getId());
+        if (fileLock != null) {
+            fileLockRepository.deleteById(fileLock.getId());
+        }
+    }
+
+    @Override
+    public void Unlock(String sessionId) {
+        var fileLock = fileLockRepository.findByUserSessionId(sessionId);
+        if (fileLock != null) {
+            fileLockRepository.deleteById(fileLock.getId());
+        }
     }
 
     @Override

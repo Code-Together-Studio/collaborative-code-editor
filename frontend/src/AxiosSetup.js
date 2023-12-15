@@ -19,7 +19,6 @@ const isTokenExpired = (token) => {
 };
 
 const handleExpiredToken = () => {
-    console.log("here");
     localStorage.removeItem('jwtToken');
     window.location.href = '/';
 };

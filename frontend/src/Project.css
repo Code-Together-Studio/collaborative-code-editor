@@ -84,6 +84,7 @@
 .main-list-item:hover {
     display: flex;
     background-color:  #252E39;
+    cursor: pointer;
 }
 
 .main-list-item:hover + .button-points, .button-points:hover {
@@ -93,6 +94,7 @@
     background-color: transparent;
     color: #B2DAFE;
     border: transparent;
+    cursor: pointer;
 }
 
 .create-folder-button {
@@ -182,6 +184,7 @@
 
 .dropdown-content a:hover {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
 }
 
 .dropdown:hover .dropdown-content {
@@ -251,4 +254,8 @@
     color: #1C3F69;
     background-color: #B2DAFE;
     font: 1rem 'Fira Code';
+}
+
+.siteName {
+    cursor: pointer;
 }

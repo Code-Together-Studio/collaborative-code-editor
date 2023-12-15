@@ -30,16 +30,7 @@ const Project = () => {
 
 
     const fileSelect = async (file) => {
-        const newFile = await fetchFileDetails(file.id);
-        if (newFile) {
-            setSelectedFile(newFile);
-            setTextareaContent(newFile.content);
-        }
-        else {
-            setSelectedFile(file);
-            setTextareaContent(file.content);
-        }
-        navigate(`/project/${projectId}/file/${file.id}`);
+        window.location.href = `/project/${projectId}/file/${file.id}`;
     }
 
 
@@ -52,7 +43,7 @@ const Project = () => {
             const response = await axiosInstance.get(`/folders/${folderId}/child-folders`);
             return response.data;
         } catch (error) {
-            console.log('Error fetching child folders:', error);
+            alert('Occured some eror. Reload page or return later');
             return [];
         }
     };
@@ -62,7 +53,7 @@ const Project = () => {
             const response = await axiosInstance.get(`/code-snippet/folder/${folderId}`);
             return response.data;
         } catch (error) {
-            console.log('Error fetching child folders:', error);
+            alert('Occured some eror. Reload page or return later');
             return [];
         }
     };
@@ -72,7 +63,7 @@ const Project = () => {
             const response = await axiosInstance.get(`/code-snippet/${fileId}`);
             return response.data;
         } catch (error) {
-            console.log('Error fetching file:', error);
+            alert('Occured error openening file. Reload page or return later');
             return null;
         }
         finally {
@@ -95,7 +86,7 @@ const Project = () => {
                         return 0;
                     }));
             } catch (error) {
-                console.log('Error fetching project root folders:', error);
+                alert('Occured some eror. Reload page or return later');
             } finally {
                 setLoading(false);
             }
@@ -125,7 +116,7 @@ const Project = () => {
                         return 0;
                     }));
             } catch (error) {
-                console.log('Error fetching project root files:', error);
+                alert('Occured some eror. Reload page or return later');
             } finally {
                 setLoading(false);
             }
@@ -150,7 +141,7 @@ const Project = () => {
                 const projectData = response.data;
                 setProject(projectData);
             } catch (error) {
-                console.log(error);
+                alert('Occured some eror. Reload page or return later');
                 window.location.href = '/';
             } finally {
                 setLoading(false);
@@ -161,36 +152,38 @@ const Project = () => {
     }, [projectId]);
 
     useEffect(() => {
-        const socket = new SockJS(`${process.env.REACT_APP_BACKEND_URL}/ws`);
-        const client = new Client({
-            webSocketFactory: () => socket,
-            onConnect: () => {
-                console.log('Connected');
-
-                client.subscribe('/topic/updates', message => {
-                    const parsedMessage = JSON.parse(message.body);
-                    var id = +fileId;
-                    if (selectedFile) {
-                        id = +selectedFile.id
-                    }
-                    if (parsedMessage.fileId && parsedMessage.fileId === id) {
-                        setDataVersion(parsedMessage.originalDataVersion);
-                        setTextareaContent(parsedMessage.content);
-                        setLoading(false);
-                    }
-                });
-            },
-            onDisconnect: () => {
-                console.log('Disconnected');
-            }
-        });
-
-        client.activate();
-        setStompClient(client);
-
-        return () => {
-            client.deactivate();
-        };
+        if (fileId) {
+            const socket = new SockJS(`${process.env.REACT_APP_BACKEND_URL}/ws?token=AAA`);
+            const client = new Client({
+                webSocketFactory: () => socket,
+                onConnect: () => {
+                    console.log('Connected');
+                    client.publish({ destination: '/app/init', body: JSON.stringify({ fileId: fileId, projectId: projectId }) });
+                    client.subscribe('/topic/updates', message => {
+                        const parsedMessage = JSON.parse(message.body);
+                        var id = +fileId;
+                        if (selectedFile) {
+                            id = +selectedFile.id
+                        }
+                        if (parsedMessage.fileId && parsedMessage.fileId === id) {
+                            setDataVersion(parsedMessage.originalDataVersion);
+                            setTextareaContent(parsedMessage.content);
+                            setLoading(false);
+                        }
+                    });
+                },
+                onDisconnect: () => {
+                    console.log('Disconnected');
+                }
+            });
+    
+            client.activate();
+            setStompClient(client);
+    
+            return () => {
+                client.deactivate();
+            };
+        }
     }, []);
 
     useEffect(() => {
@@ -201,61 +194,35 @@ const Project = () => {
     }, [textareaContent]);
 
 
-    const createFolder = async (parentId, name) => {
-        try {
-            const formData = new FormData();
-            var url = `/folders/create`
-            if (parentId !== null) {
-                formData.append('parentFolderId', parentId);
-            }
-            else {
-                formData.append('parentProjectId', projectId);
-                url = `/folders/project/create`
-            }
-            formData.append('name', name);
-
-            const response = await axiosInstance.post(url, formData);
-
-            return (response.dat);
-        } catch (error) {
-            console.error('Error creating folder:', error);
-        }
-    };
-
     const createFolderInProject = async (name) => {
-        try {
-            let url = `${process.env.REACT_APP_BACKEND_URL}/code-snippet/folder`;
-            let isExist = false;
-            const formData = new FormData();
-            formData.append('parentProjectId', projectId);
-            formData.append('name', name);
-            rootFolders.map((item) => {
-                if (item.name === name) {
-                    labelFolderErrorRef.current.innerText = "folder exists";
-                    isExist = true;
-                }
-            })
-            if (isExist === false) {
-                inputFolderNameRef.current.value = "";
-                labelFolderErrorRef.current.innerText = "";
-
-                const response = await axiosInstance.post(`/folders/project/create`, formData);
-
-                const dataFolder = response.data;
-                setRootFolders(prev => [...rootFolders].sort(
-                    function (a, b) {
-                        let x = a.name.toLowerCase();
-                        let y = b.name.toLowerCase();
-
-                        if (x > y) { return 1; }
-                        if (x < y) { return -1; }
-                        return 0;
-                    }))
-                setRootFolders(prev => [...rootFolders, dataFolder]);
-                return (dataFolder);
+        let isExist = false;
+        const formData = new FormData();
+        formData.append('parentProjectId', projectId);
+        formData.append('name', name);
+        rootFolders.map((item) => {
+            if (item.name === name) {
+                labelFolderErrorRef.current.innerText = "folder exists";
+                isExist = true;
             }
-        } catch (error) {
-            console.error('Error creating file:', error);
+        })
+        if (isExist === false) {
+            inputFolderNameRef.current.value = "";
+            labelFolderErrorRef.current.innerText = "";
+
+            const response = await axiosInstance.post(`/folders/project/create`, formData);
+
+            const dataFolder = response.data;
+            setRootFolders(prev => [...rootFolders].sort(
+                function (a, b) {
+                    let x = a.name.toLowerCase();
+                    let y = b.name.toLowerCase();
+
+                    if (x > y) { return 1; }
+                    if (x < y) { return -1; }
+                    return 0;
+                }))
+            setRootFolders(prev => [...rootFolders, dataFolder]);
+            return (dataFolder);
         }
     };
 
@@ -319,29 +286,20 @@ const Project = () => {
     };
 
     const deleteFile = async (id) => {
-        try {
-            const formData = new FormData();
-            formData.append('id', id);
-            await axiosInstance.delete(`/code-snippet/${id}`, formData);
-        } catch (error) {
-            console.error('Error deleting file:', error);
-        }
+        const formData = new FormData();
+        formData.append('id', id);
+        await axiosInstance.delete(`/code-snippet/${id}`, formData);
     };
 
     const deleteFolder = async (id) => {
-        try {
-            const formData = new FormData();
-            formData.append('id', id);
-            await axiosInstance.delete(`/folders/${id}`, formData);
-        } catch (error) {
-            console.error('Error whilst deleting folder:', error);
-        }
+        const formData = new FormData();
+        formData.append('id', id);
+        await axiosInstance.delete(`/folders/${id}`, formData);
     };
 
     const rootFilesView = useMemo(() => rootFiles.map((item, index) => (
         <ListItem key={index} item={item}
             fetchChildFolders={fetchChildFolders}
-            onCreateFolder={createFolder}
             fetchChildFiles={fetchChildFiles}
             onCreateFile={createFileInFolder}
             deleteFile={deleteFile}
@@ -420,7 +378,7 @@ const Project = () => {
             <div className="main-content">
                 <div className={leftBlockClassName}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <h1 className="siteName">{project ? project.title : 'Project'}</h1>
+                        <h1 className="siteName" onClick={() => window.location.href=`/project/${projectId}`}>{project ? project.title : 'Project'}</h1>
                         <div className="dropdown">
                             <button className="create-folder-button">⋮</button>
                             <div className="dropdown-content">
@@ -431,7 +389,8 @@ const Project = () => {
                                             <label htmlFor="name">Enter file name:</label>
                                             <input type="text" ref={inputFileNameRef} id="name" name="name" />
                                             <label ref={labelFileErrorRef}></label>
-                                            <button onClick={() => createFileInProject(inputFileNameRef.current.value)}>
+                                            <button onClick={() => createFileInProject(inputFileNameRef.current.value)
+                                                                    .catch((error) => alert(`Did not create file in project`))}>
                                                 Submit
                                             </button>
                                         </form>
@@ -444,7 +403,8 @@ const Project = () => {
                                             <label htmlFor="name">Enter folder name:</label>
                                             <input type="text" ref={inputFolderNameRef} id="name" name="name" />
                                             <label ref={labelFolderErrorRef}></label>
-                                            <button onClick={() => createFolderInProject(inputFolderNameRef.current.value)}>
+                                            <button onClick={() => createFolderInProject(inputFolderNameRef.current.value)
+                                                                    .catch((error) => alert(`Did not create folder in project`))}>
                                                 Submit
                                             </button>
                                         </form>
@@ -454,9 +414,8 @@ const Project = () => {
                         </div>
                     </div>
                     {rootFolders.concat(rootFiles).map((item, index) => (
-                        <ListItem key={index} item={item}
+                        <ListItem key={index} axiosInstance={axiosInstance} item={item}
                             fetchChildFolders={fetchChildFolders}
-                            onCreateFolder={createFolder}
                             fetchChildFiles={fetchChildFiles}
                             onCreateFile={createFileInFolder}
                             deleteFile={deleteFile}

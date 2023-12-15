@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface FileLockRepository extends JpaRepository<FileLock, Integer> {
     FileLock findByFileIdAndUserSessionId(Integer fileId, String userSessionId);
+    FileLock findByUserSessionId(String userSessionId);
 
     List<FileLock> getAllByFileIdAndUserSessionIdNot(Integer fileId, String userSessionId);
 }

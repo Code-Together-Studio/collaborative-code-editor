@@ -1,20 +1,47 @@
 package ua.knu.backend.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.messaging.SessionConnectedEvent;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import ua.knu.backend.entity.FileLock;
 import ua.knu.backend.helpers.DiffResult;
 import ua.knu.backend.helpers.DiffService;
 import ua.knu.backend.service.CodeSnippetService;
+import ua.knu.backend.service.FileLockService;
+import ua.knu.backend.web.dto.InitDto;
 import ua.knu.backend.web.dto.TextChangeDto;
 
 @Controller
 public class WebSocketController {
 
     private final CodeSnippetService codeSnippetService;
+    private final FileLockService fileLockService;
 
-    public WebSocketController(CodeSnippetService codeSnippetService) {
+    public WebSocketController(CodeSnippetService codeSnippetService, FileLockService fileLockService) {
         this.codeSnippetService = codeSnippetService;
+        this.fileLockService = fileLockService;
+    }
+
+
+    @EventListener
+    public void handleSessionDisconnected(SessionDisconnectEvent event) {
+        String sessionId = event.getSessionId();
+        this.fileLockService.Unlock(sessionId);
+    }
+    @MessageMapping("/init")
+    public void handleInit(InitDto dto, SimpMessageHeaderAccessor headerAccessor) {
+        String sessionId = headerAccessor.getSessionId();
+        this.fileLockService.Lock(dto.getFileId(), sessionId);
     }
 
     @MessageMapping("/change")
